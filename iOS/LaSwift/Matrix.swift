@@ -8,7 +8,6 @@
 
 import Accelerate
 
-
 public class Matrix {
     private var real: RMatrix! = nil
     private var isReal: Bool = false
@@ -225,5 +224,4 @@ public class Matrix {
         assert(col >= 0 && col < self.cols)
         return col >= 0 ? col : self.cols + col
     }
-    
 }

@@ -8,7 +8,6 @@
 
 import Accelerate
 
-
 public func + (left: Complex, right: Complex) -> Complex {
     if left.isImagPerfectZero && left.isRealPerfectZero && right.isImagPerfectZero && right.isRealPerfectZero {
         return Complex()
@@ -40,6 +39,10 @@ public func + (left: Complex, right: Complex) -> Complex {
     }
 }
 
+public func += (inout left: Complex, right: Complex) {
+    left = left + right
+}
+
 public func - (left: Complex, right: Complex) -> Complex {
     if left.isImagPerfectZero && left.isRealPerfectZero && right.isImagPerfectZero && right.isRealPerfectZero {
         return Complex()
@@ -69,6 +72,10 @@ public func - (left: Complex, right: Complex) -> Complex {
     else {
         return Complex(real: left.real - right.real, imag: left.imag - right.imag)
     }
+}
+
+public func -= (inout left: Complex, right: Complex) {
+    left = left - right
 }
 
 // ------------

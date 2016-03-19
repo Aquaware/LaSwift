@@ -8,7 +8,6 @@
 
 import Accelerate
 
-
 public class RMatrix {
     public var la: la_object_t! = nil
     private var rows: Int = 0
@@ -55,7 +54,6 @@ public class RMatrix {
             la_hint_t(LA_NO_HINT),
             la_attribute_t(LA_DEFAULT_ATTRIBUTES))
     }
-
     
     init(la: la_object_t) {
         self.rows = Int(la_matrix_rows(la))

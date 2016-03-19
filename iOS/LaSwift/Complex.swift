@@ -8,9 +8,6 @@
 
 import Accelerate
 
-
-
-
 public class Complex {
     var real: Double = 0.0
     var imag: Double = 0.0
