@@ -2,8 +2,8 @@
 //  LaSwiftTests.swift
 //  LaSwiftTests
 //
-//  Created by 工藤征生 on 2016/03/16.
-//  Copyright © 2016年 Aquaware. All rights reserved.
+//  Created by Ikuo Kudo on March,16,2016
+//  Copyright © 2016 Aquaware. All rights reserved.
 //
 
 import XCTest

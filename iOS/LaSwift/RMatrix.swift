@@ -2,11 +2,10 @@
 //  RMatrix.swift
 //  LaSwift
 //
-//  Created by Ikuo Kudo on 2016/03/16.
+//  Created by Ikuo Kudo on March,16,2016
 //  Copyright © 2016 Aquaware. All rights reserved.
 //
 
-import Foundation
 import Accelerate
 
 public func + (left: Double, right: RMatrix) -> RMatrix {
@@ -156,6 +155,19 @@ public class RMatrix {
                                                 la_attribute_t(LA_DEFAULT_ATTRIBUTES))
     }
     
+    init(value: Double, rows: Int, cols: Int) {
+        self.rows = rows
+        self.cols = cols
+        let array = [Double](count: rows * cols, repeatedValue: value)
+        self.la = la_matrix_from_double_buffer( array,
+            la_count_t(self.rows),
+            la_count_t(self.cols),
+            la_count_t(self.cols),
+            la_hint_t(LA_NO_HINT),
+            la_attribute_t(LA_DEFAULT_ATTRIBUTES))
+    }
+
+    
     init(la: la_object_t) {
         self.rows = Int(la_matrix_rows(la))
         self.cols = Int(la_matrix_cols(la))
@@ -164,6 +176,14 @@ public class RMatrix {
     
     public var shape: (Int, Int) {
         return (self.rows, self.cols)
+    }
+    
+    public var rowSize: Int {
+        return self.rows
+    }
+    
+    public var colSize: Int {
+        return self.cols
     }
     
     public var flat: [Double] {
@@ -288,13 +308,26 @@ public class RMatrix {
         return RMatrix(array: array, rows: rows, cols: cols)
     }
     
-    //public static func linspace() -> RMatrix {
+    public static func linspace(start: Double, end: Double, num: Int, endpoint: Bool = true) -> RMatrix {
+        var step = 0.0
+        if endpoint {
+            assert(num > 1)
+            step = (end - start) / Double(num - 1)
+        }
+        else {
+            assert(num > 0)
+            step = (end - start) / Double(num)
+        }
         
-    //}
-    
-    //public func appendRow(matrix: RMatrix) -> RMatrix {
-    
-    //}
+        var array = [Double](count: num, repeatedValue: 0)
+        var value = start
+        for var i = 0; i < num; i++ {
+            array[i] = value
+            value += step
+        }
+        
+        return RMatrix(array: array, rows: 1, cols: num)
+    }
     
     subscript (row: Int, col: Int) -> Double {
         get {

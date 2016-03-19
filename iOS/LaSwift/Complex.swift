@@ -2,11 +2,10 @@
 //  Complex.swift
 //  LaSwift
 //
-//  Created by Ikuo Kudo on 2016/03/17.
+//  Created by Ikuo Kudo on March,17,2016
 //  Copyright © 2016 Aquaware. All rights reserved.
 //
 
-import Foundation
 import Accelerate
 
 

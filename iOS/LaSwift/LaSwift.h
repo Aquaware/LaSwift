@@ -2,7 +2,7 @@
 //  LaSwift.h
 //  LaSwift
 //
-//  Created by Ikuo Kudo on 2016/03/16.
+//  Created by Ikuo Kudo on March,16,2016
 //  Copyright © 2016年 Aquaware. All rights reserved.
 //
 
