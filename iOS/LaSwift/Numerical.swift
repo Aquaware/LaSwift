@@ -54,6 +54,14 @@ extension RMatrix {
         return calc(axis, clousure: clousure)
     }
     
+    public func abs() -> RMatrix{
+        let count = self.rowSize * self.colSize
+        var array = [Double](count: count, repeatedValue: 0.0)
+        vvfabs(&array, self.flat, [Int32(count)])
+        
+        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+    }
+    
     public func sqrt() -> RMatrix{
         let count = self.rowSize * self.colSize
         var array = [Double](count: count, repeatedValue: 0.0)
@@ -67,6 +75,134 @@ extension RMatrix {
         let count = self.rowSize * self.colSize
         var array = [Double](count: count, repeatedValue: 0.0)
         vvpow(&array, self.flat, y.flat, [Int32(count)])
+        
+        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+    }
+    
+    public func exp() -> RMatrix {
+        let count = self.rowSize * self.colSize
+        var array = [Double](count: count, repeatedValue: 0.0)
+        vvexp(&array, self.flat, [Int32(count)])
+        
+        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+    }
+    
+    public func ln() -> RMatrix {
+        let count = self.rowSize * self.colSize
+        var array = [Double](count: count, repeatedValue: 0.0)
+        vvlog(&array, self.flat, [Int32(count)])
+        
+        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+    }
+    
+    public func log2() -> RMatrix {
+        let count = self.rowSize * self.colSize
+        var array = [Double](count: count, repeatedValue: 0.0)
+        vvlog2(&array, self.flat, [Int32(count)])
+        
+        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+    }
+    
+    public func log10() -> RMatrix {
+        let count = self.rowSize * self.colSize
+        var array = [Double](count: count, repeatedValue: 0.0)
+        vvlog10(&array, self.flat, [Int32(count)])
+        
+        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+    }
+    
+    public func ceil() -> RMatrix {
+        let count = self.rowSize * self.colSize
+        var array = [Double](count: count, repeatedValue: 0.0)
+        vvceil(&array, self.flat, [Int32(count)])
+        
+        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+    }
+    
+    public func floor() -> RMatrix {
+        let count = self.rowSize * self.colSize
+        var array = [Double](count: count, repeatedValue: 0.0)
+        vvfloor(&array, self.flat, [Int32(count)])
+        
+        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+    }
+    
+    public func round() -> RMatrix {
+        let count = self.rowSize * self.colSize
+        var array = [Double](count: count, repeatedValue: 0.0)
+        vvnint(&array, self.flat, [Int32(count)])
+        
+        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+    }
+    
+    public func sin() -> RMatrix {
+        let count = self.rowSize * self.colSize
+        var array = [Double](count: count, repeatedValue: 0.0)
+        vvsin(&array, self.flat, [Int32(count)])
+        
+        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+    }
+    
+    public func cos() -> RMatrix {
+        let count = self.rowSize * self.colSize
+        var array = [Double](count: count, repeatedValue: 0.0)
+        vvcos(&array, self.flat, [Int32(count)])
+        
+        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+    }
+    
+    public func tan() -> RMatrix {
+        let count = self.rowSize * self.colSize
+        var array = [Double](count: count, repeatedValue: 0.0)
+        vvtan(&array, self.flat, [Int32(count)])
+        
+        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+    }
+    
+    public func sinh() -> RMatrix {
+        let count = self.rowSize * self.colSize
+        var array = [Double](count: count, repeatedValue: 0.0)
+        vvsinh(&array, self.flat, [Int32(count)])
+        
+        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+    }
+    
+    public func cosh() -> RMatrix {
+        let count = self.rowSize * self.colSize
+        var array = [Double](count: count, repeatedValue: 0.0)
+        vvcosh(&array, self.flat, [Int32(count)])
+        
+        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+    }
+    
+    public func tanh() -> RMatrix {
+        let count = self.rowSize * self.colSize
+        var array = [Double](count: count, repeatedValue: 0.0)
+        vvtanh(&array, self.flat, [Int32(count)])
+        
+        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+    }
+    
+    public func asinh() -> RMatrix {
+        let count = self.rowSize * self.colSize
+        var array = [Double](count: count, repeatedValue: 0.0)
+        vvasinh(&array, self.flat, [Int32(count)])
+        
+        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+    }
+    
+    public func acosh() -> RMatrix {
+        let count = self.rowSize * self.colSize
+        var array = [Double](count: count, repeatedValue: 0.0)
+        vvacosh(&array, self.flat, [Int32(count)])
+        
+        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+    }
+    
+    public func atanh() -> RMatrix {
+        let count = self.rowSize * self.colSize
+        var array = [Double](count: count, repeatedValue: 0.0)
+        vvatanh(&array, self.flat, [Int32(count)])
         
         return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
     }
