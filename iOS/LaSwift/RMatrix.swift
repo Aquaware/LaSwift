@@ -12,6 +12,9 @@ public class RMatrix {
     public var la: la_object_t! = nil
     private var rows: Int = 0
     private var cols: Int = 0
+
+    init() {        
+    }
     
     init(array: [[Double]]) {
         self.rows = array.count

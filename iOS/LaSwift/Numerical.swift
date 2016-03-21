@@ -1,0 +1,137 @@
+//
+//  Numerical.swift
+//  LaSwift
+//
+// Created by Ikuo Kudo on March,20,2016
+//  Copyright © 2016 Aquaware. All rights reserved.
+//
+
+import Accelerate
+
+extension RMatrix {
+    
+    public func sum() -> Double {
+        return self.calcSum(self.flat)
+    }
+    
+    public func sum(axis: Int) -> RMatrix {
+        let clousure = { (array: [Double]) -> Double in
+            return self.calcSum(array)
+        }
+        return calc(axis, clousure: clousure)
+    }
+    
+    public func max() -> Double {
+        return self.calcMax(self.flat)
+    }
+    
+    public func max(axis: Int) -> RMatrix {
+        let clousure = { (array: [Double]) -> Double in
+            return self.calcMax(array)
+        }
+        return calc(axis, clousure: clousure)
+    }
+
+    public func min() -> Double {
+        return self.calcMin(self.flat)
+    }
+    
+    public func min(axis: Int) -> RMatrix {
+        let clousure = { (array: [Double]) -> Double in
+            return self.calcMin(array)
+        }
+        return calc(axis, clousure: clousure)
+    }
+    
+    public func mean() -> Double {
+        return self.calcMean(self.flat)
+    }
+    
+    public func mean(axis: Int) -> RMatrix {
+        let clousure = { (array: [Double]) -> Double in
+            return self.calcMean(array)
+        }
+        return calc(axis, clousure: clousure)
+    }
+    
+    public func sqrt() -> RMatrix{
+        let count = self.rowSize * self.colSize
+        var array = [Double](count: count, repeatedValue: 0.0)
+        vvsqrt(&array, self.flat, [Int32(count)])
+        
+        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+    }
+    
+    public func pow(y: RMatrix) -> RMatrix {
+        assert(self.rowSize == y.rowSize && self.colSize == y.colSize)
+        let count = self.rowSize * self.colSize
+        var array = [Double](count: count, repeatedValue: 0.0)
+        vvpow(&array, self.flat, y.flat, [Int32(count)])
+        
+        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+    }
+    
+    private func calcSum(array: [Double]) -> Double {
+        var value: Double = 0.0
+        vDSP_sveD(array, 1, &value, vDSP_Length(array.count))
+        return value
+    }
+    
+    private func calcMax(array: [Double]) -> Double {
+        var value: Double = 0.0
+        vDSP_maxvD(array, 1, &value, vDSP_Length(array.count))
+        return value
+    }
+    
+    private func calcMin(array: [Double]) -> Double {
+        var value: Double = 0.0
+        vDSP_minvD(array, 1, &value, vDSP_Length(array.count))
+        return value
+    }
+    
+    private func calcMean(array: [Double]) -> Double {
+        var value: Double = 0.0
+        vDSP_meanvD(array, 1, &value, vDSP_Length(array.count))
+        return value
+    }
+    
+    private func calc(axis: Int, clousure: ([Double]) -> Double) -> RMatrix {
+        var result: [Double]
+        if axis == 0 {
+            result = [Double](count: self.colSize, repeatedValue: 0.0)
+            for var i = 0; i < self.colSize; i++ {
+                let vector = slice(self.la, rowRange: 0..<self.rowSize, colRange: i..<i+1)
+                result[i] = clousure(vector)
+            }
+            return RMatrix(array: result, rows: 1, cols: self.colSize)
+        }
+        else if axis == 1 {
+            result = [Double](count: self.rowSize, repeatedValue: 0.0)
+            for var i = 0; i < self.rowSize; i++ {
+                let vector = slice(self.la, rowRange: i..<i, colRange: 0..<self.colSize)
+                result[i] = clousure(vector)
+            }
+            return RMatrix(array: result, rows: self.colSize, cols: 1)
+        }
+        else {
+            return RMatrix()
+        }
+    }
+    
+    private func slice(la: la_object_t, rowRange: Range<Int>, colRange: Range<Int>) -> [Double]{
+        let rows = rowRange.endIndex - rowRange.startIndex
+        let cols = colRange.endIndex - colRange.startIndex
+        let la = la_matrix_slice(   self.la,
+                                    la_index_t(rowRange.startIndex),
+                                    la_index_t(colRange.startIndex),
+                                    1,
+                                    1,
+                                    la_count_t(rows),
+                                    la_count_t(cols) )
+        
+        var array = [Double](count: rows * cols, repeatedValue: 0.0)
+        la_matrix_to_double_buffer(&array, la_count_t(rows * cols), la)
+
+        return array
+    }
+}
