@@ -314,3 +314,139 @@ extension RMatrix {
         return array
     }
 }
+
+
+extension Matrix {
+    
+    public func copy() -> Matrix {
+        let real = self.realPart
+        let imag = self.imagPart
+        return Matrix(real: real, imag: imag)
+    }
+    
+    public func sort() {
+        let count = self.rowSize * self.colSize
+        var array = self.realPart.flat
+        vDSP_vsortD(&array, UInt(count), 1)
+        la_release(self.realPart.la)
+        self.realPart.la = la_matrix_from_double_buffer( array,
+            la_count_t(self.rowSize),
+            la_count_t(self.colSize),
+            la_count_t(self.colSize),
+            la_hint_t(LA_NO_HINT),
+            la_attribute_t(LA_DEFAULT_ATTRIBUTES))
+    }
+    
+    public static func rand(rows: Int, cols: Int) -> Matrix {
+        let count = rows * cols
+        var array = [Double](count: count, repeatedValue: 0.0)
+        var i:__CLPK_integer = 1
+        var seed:Array<__CLPK_integer> = [1, 2, 3, 5]
+        var nn: __CLPK_integer  = __CLPK_integer(count)
+        dlarnv_(&i, &seed, &nn, &array)
+        
+        return Matrix(real: array, rows: rows, cols: cols)
+    }
+    
+
+    
+    public func sum(axis: Int) -> Matrix {
+        return Matrix(real: self.realPart.sum(axis), imag: self.imagPart.sum(axis))
+    }
+    
+    public func max(axis: Int) -> Matrix {
+        return Matrix(real: self.realPart.max(axis), imag: self.imagPart.max(axis))
+    }
+
+    
+    public func min(axis: Int) -> Matrix {
+          return Matrix(real: self.realPart.min(axis), imag: self.imagPart.min(axis))
+    }
+
+    
+    public func mean(axis: Int) -> Matrix {
+        return Matrix(real: self.realPart.mean(axis), imag: self.imagPart.mean(axis))
+    }
+    
+    public func variance() -> Double {
+        assert(self.rowSize > 0 && self.colSize > 0)
+        return self.realPart.variance()
+    }
+    
+    public func std() -> Double {
+        return self.realPart.std()
+    }
+    
+    public func absolute() -> Matrix{
+        return Matrix(real:self.realPart.absolute())
+    }
+    
+    public func sqrt() -> Matrix{
+        return Matrix(real:self.realPart.sqrt())
+    }
+    
+    public func exp() -> Matrix {
+        return Matrix(real:self.realPart.exp())
+    }
+    
+    public func ln() -> Matrix {
+        return Matrix(real:self.realPart.ln())
+    }
+    
+    public func log2() -> Matrix {
+        return Matrix(real:self.realPart.log2())
+    }
+    
+    public func log10() -> Matrix {
+        return Matrix(real:self.realPart.log10())
+    }
+    
+    public func ceil() -> Matrix {
+        return Matrix(real:self.realPart.ceil())
+    }
+    
+    public func floor() -> Matrix {
+        return Matrix(real:self.realPart.floor())
+    }
+    
+    public func round() -> Matrix {
+        return Matrix(real:self.realPart.round())
+    }
+    
+    public func sin() -> Matrix {
+        return Matrix(real:self.realPart.sin())
+    }
+    
+    public func cos() -> Matrix {
+        return Matrix(real:self.realPart.cos())
+    }
+    
+    public func tan() -> Matrix {
+        return Matrix(real:self.realPart.tan())
+    }
+    
+    public func sinh() -> Matrix {
+        return Matrix(real:self.realPart.sinh())
+    }
+    
+    public func cosh() -> Matrix {
+        return Matrix(real:self.realPart.cosh())
+    }
+    
+    public func tanh() -> Matrix {
+        return Matrix(real:self.realPart.tanh())
+    }
+    
+    public func asinh() -> Matrix {
+        return Matrix(real:self.realPart.asinh())
+    }
+    
+    public func acosh() -> Matrix {
+        return Matrix(real:self.realPart.acosh())
+    }
+    
+    public func atanh() -> Matrix {
+        return Matrix(real:self.realPart.atanh())
+    }
+
+}
