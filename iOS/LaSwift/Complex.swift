@@ -2,7 +2,7 @@
 //  Complex.swift
 //  LaSwift
 //
-//  Created by Ikuo Kudo on March,17,2016
+//  Created by Ikuo Kudo on 17,March,2016
 //  Copyright © 2016 Aquaware. All rights reserved.
 //
 

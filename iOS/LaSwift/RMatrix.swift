@@ -167,7 +167,7 @@ public class RMatrix {
     public func inv() -> RMatrix {
         var flat = self.flat
         for var i = 0; i < self.rows * self.cols; i++ {
-            let value = flat[i]
+            let value:Double = flat[i]
             if abs(value) > 1e-50 {
                 flat[i] = 1.0 / value
             }

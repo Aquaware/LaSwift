@@ -1,14 +1,44 @@
 //
-//  Numerical.swift
+//  Mathematics.swift
 //  LaSwift
 //
-// Created by Ikuo Kudo on March,20,2016
+// Created by Ikuo Kudo on 20,March,2016
 //  Copyright © 2016 Aquaware. All rights reserved.
 //
 
+import Darwin
 import Accelerate
 
 extension RMatrix {
+    
+    public func copy() -> RMatrix {
+        let array = self.flat
+        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+    }
+    
+    public func sort() {
+        let count = self.rowSize * self.colSize
+        var array = self.flat
+        vDSP_vsortD(&array, UInt(count), 1)
+        la_release(self.la)
+        self.la = la_matrix_from_double_buffer( array,
+                                                la_count_t(self.rowSize),
+                                                la_count_t(self.colSize),
+                                                la_count_t(self.colSize),
+                                                la_hint_t(LA_NO_HINT),
+                                                la_attribute_t(LA_DEFAULT_ATTRIBUTES))
+    }
+    
+    public static func rand(rows: Int, cols: Int) -> RMatrix {
+        let count = rows * cols
+        var array = [Double](count: count, repeatedValue: 0.0)
+        var i:__CLPK_integer = 1
+        var seed:Array<__CLPK_integer> = [1, 2, 3, 5]
+        var nn: __CLPK_integer  = __CLPK_integer(count)
+        dlarnv_(&i, &seed, &nn, &array)
+        
+        return RMatrix(array: array, rows: rows, cols: cols)
+    }
     
     public func sum() -> Double {
         return self.calcSum(self.flat)
@@ -54,7 +84,17 @@ extension RMatrix {
         return calc(axis, clousure: clousure)
     }
     
-    public func abs() -> RMatrix{
+    public func variance() -> Double {
+        assert(self.rowSize > 0 && self.colSize > 0)
+        let square = (self - self.mean()) * (self - self.mean())
+        return square.sum() / Double(self.rowSize) / Double(self.colSize)
+    }
+    
+    public func std() -> Double {
+        return Darwin.sqrt(variance())
+    }
+    
+    public func absolute() -> RMatrix{
         let count = self.rowSize * self.colSize
         var array = [Double](count: count, repeatedValue: 0.0)
         vvfabs(&array, self.flat, [Int32(count)])
@@ -206,6 +246,8 @@ extension RMatrix {
         
         return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
     }
+
+    // ---
     
     private func calcSum(array: [Double]) -> Double {
         var value: Double = 0.0
@@ -230,6 +272,7 @@ extension RMatrix {
         vDSP_meanvD(array, 1, &value, vDSP_Length(array.count))
         return value
     }
+    
     
     private func calc(axis: Int, clousure: ([Double]) -> Double) -> RMatrix {
         var result: [Double]

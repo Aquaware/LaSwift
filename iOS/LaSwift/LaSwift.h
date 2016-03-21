@@ -2,8 +2,8 @@
 //  LaSwift.h
 //  LaSwift
 //
-//  Created by Ikuo Kudo on March,16,2016
-//  Copyright © 2016年 Aquaware. All rights reserved.
+//  Created by Ikuo Kudo on 16,March,2016
+//  Copyright © 2016 Aquaware. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>

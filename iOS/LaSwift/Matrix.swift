@@ -2,7 +2,7 @@
 //  Matrix.swift
 //  LaSwift
 //
-//  Created by Ikuo Kudo on March,18,2016
+//  Created by Ikuo Kudo on 18,March,2016
 //  Copyright © 2016 Aquaware. All rights reserved.
 //
 

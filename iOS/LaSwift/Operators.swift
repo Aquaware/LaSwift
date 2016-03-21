@@ -2,7 +2,7 @@
 //  Operators.swift
 //  LaSwift
 //
-//  Created by Ikuo Kudo on March,18,2016
+//  Created by Ikuo Kudo on 18,March,2016
 //  Copyright © 2016 Aquaware. All rights reserved.
 //
 
@@ -78,7 +78,7 @@ public func -= (inout left: Complex, right: Complex) {
     left = left - right
 }
 
-// ------------
+// ---
 
 public func + (left: Double, right: RMatrix) -> RMatrix {
     let splat = la_splat_from_double(left, la_attribute_t(LA_DEFAULT_ATTRIBUTES))
