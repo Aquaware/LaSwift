@@ -14,7 +14,7 @@
 		4703292F1C9AF65C00FBF776 /* Complex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4703292E1C9AF65C00FBF776 /* Complex.swift */; };
 		470329311C9C4CAB00FBF776 /* Matrix.swift in Sources */ = {isa = PBXBuildFile; fileRef = 470329301C9C4CAB00FBF776 /* Matrix.swift */; };
 		470329331C9D253300FBF776 /* Operators.swift in Sources */ = {isa = PBXBuildFile; fileRef = 470329321C9D253300FBF776 /* Operators.swift */; };
-		4797EB0F1C9EE95D008E9448 /* Mathematics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4797EB0E1C9EE95D008E9448 /* Mathematics.swift */; };
+		4797EB0F1C9EE95D008E9448 /* BasicMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4797EB0E1C9EE95D008E9448 /* BasicMath.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,7 +38,7 @@
 		4703292E1C9AF65C00FBF776 /* Complex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Complex.swift; sourceTree = "<group>"; };
 		470329301C9C4CAB00FBF776 /* Matrix.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Matrix.swift; sourceTree = "<group>"; };
 		470329321C9D253300FBF776 /* Operators.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Operators.swift; sourceTree = "<group>"; };
-		4797EB0E1C9EE95D008E9448 /* Mathematics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mathematics.swift; sourceTree = "<group>"; };
+		4797EB0E1C9EE95D008E9448 /* BasicMath.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicMath.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,7 +87,7 @@
 				4703292E1C9AF65C00FBF776 /* Complex.swift */,
 				470329301C9C4CAB00FBF776 /* Matrix.swift */,
 				470329321C9D253300FBF776 /* Operators.swift */,
-				4797EB0E1C9EE95D008E9448 /* Mathematics.swift */,
+				4797EB0E1C9EE95D008E9448 /* BasicMath.swift */,
 			);
 			path = LaSwift;
 			sourceTree = "<group>";
@@ -213,7 +213,7 @@
 			files = (
 				4703292F1C9AF65C00FBF776 /* Complex.swift in Sources */,
 				470329331C9D253300FBF776 /* Operators.swift in Sources */,
-				4797EB0F1C9EE95D008E9448 /* Mathematics.swift in Sources */,
+				4797EB0F1C9EE95D008E9448 /* BasicMath.swift in Sources */,
 				4703292D1C9996EE00FBF776 /* RMatrix.swift in Sources */,
 				470329311C9C4CAB00FBF776 /* Matrix.swift in Sources */,
 			);

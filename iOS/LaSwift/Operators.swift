@@ -8,6 +8,14 @@
 
 import Accelerate
 
+public func + (left: Double, right: Complex) -> Complex {
+    return Complex(real: left) + right
+}
+
+public func + (left: Complex, right: Double) -> Complex {
+    return left + Complex(real: right)
+}
+
 public func + (left: Complex, right: Complex) -> Complex {
     if left.isImagPerfectZero && left.isRealPerfectZero && right.isImagPerfectZero && right.isRealPerfectZero {
         return Complex()
@@ -43,6 +51,18 @@ public func += (inout left: Complex, right: Complex) {
     left = left + right
 }
 
+public func += (inout left: Complex, right: Double) {
+    left = left + right
+}
+
+public func - (left: Double, right: Complex) -> Complex {
+    return Complex(real: left) - right
+}
+
+public func - (left: Complex, right: Double) -> Complex {
+    return left - Complex(real: right)
+}
+
 public func - (left: Complex, right: Complex) -> Complex {
     if left.isImagPerfectZero && left.isRealPerfectZero && right.isImagPerfectZero && right.isRealPerfectZero {
         return Complex()
@@ -76,6 +96,47 @@ public func - (left: Complex, right: Complex) -> Complex {
 
 public func -= (inout left: Complex, right: Complex) {
     left = left - right
+}
+
+public func -= (inout left: Complex, right: Double) {
+    left = left - right
+}
+
+public func * (left: Double, right: Complex) -> Complex {
+    return Complex(real: left) * right
+}
+
+public func * (left: Complex, right: Double) -> Complex {
+    return left * Complex(real: right)
+}
+
+public func * (left: Complex, right: Complex) -> Complex {
+    if left.isRealPerfectZero && right.isRealPerfectZero && !left.isImagPerfectZero && !right.isImagPerfectZero {
+        return Complex(real: left.real * right.real)
+    }
+    else if !left.isRealPerfectZero && !right.isRealPerfectZero && left.isImagPerfectZero && right.isImagPerfectZero {
+        return Complex(real: -left.imag * right.imag)
+    }
+    else {
+        return Complex(  real: left.real * right.real - left.imag * right.imag,
+                        imag: left.real * right.imag + left.imag * right.real)
+    }
+}
+
+public func *= (inout left: Complex, right: Double) {
+    left = left * right
+}
+
+public func == (left: Complex, right: Complex) -> Bool {
+    if left.isRealPerfectZero != right.isRealPerfectZero || left.isImagPerfectZero != right.isImagPerfectZero {
+        return false
+    }
+    
+    return (left.real == right.real && left.imag == right.imag) ? true : false
+}
+
+func != (left: Complex, right: Complex) -> Bool {
+    return !(left == right)
 }
 
 // ---
@@ -192,6 +253,17 @@ public func > (left: RMatrix, right: Double) -> RMatrix {
     return RMatrix(array: array, rows: left.rowSize, cols: left.colSize)
 }
 
+public func == (left: RMatrix, right: RMatrix) -> Bool {
+    if left.rowSize != right.rowSize || left.colSize != right.colSize {
+        return false
+    }
+    
+    return (left.flat == right.flat) ? true : false
+}
+
+func != (left: RMatrix, right: RMatrix) -> Bool {
+    return !(left == right)
+}
 
 // ------------
 
@@ -398,3 +470,19 @@ public func *= (inout left: Matrix, right: Matrix) {
     left = left * right
 }
 
+public func == (left: Matrix, right: Matrix) -> Bool {
+    if left.isRealPart != right.isRealPart || left.isImagPart != right.isImagPart {
+        return false
+    }
+
+    if left.realPart == right.realPart {
+        return (left.imagPart == right.imagPart) ? true : false
+    }
+    else {
+        return false
+    }
+}
+
+func != (left: Matrix, right: Matrix) -> Bool {
+    return !(left == right)
+}

@@ -38,4 +38,17 @@ public class Complex {
         return Complex(imag: 1.0)
     }
     
+    public var description: String {
+        var str = "\(self.real) "
+        if !isImagPerfectZero {
+            if self.imag >= 0 {
+                str += "+ \(self.imag)j \n"
+            }
+            else {
+                str += "- \(self.imag)j \n"
+            }
+        }
+        return str
+    }
+    
 }

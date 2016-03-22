@@ -23,9 +23,9 @@ public class RMatrix {
         var buffer = [Double](count: self.rows * self.cols, repeatedValue: 0.0)
         for var i = 0; i < self.rows; i++ {
             let begin = i * self.cols
-            let end = begin + self.cols - 1
+            let end = begin + self.cols
             let item = array[i]
-            buffer[begin...end] = item[0...(self.rows - 1)]
+            buffer[begin..<end] = item[0..<self.cols]
         }
         self.la = la_matrix_from_double_buffer( buffer,
                                                 la_count_t(self.rows),
@@ -268,7 +268,7 @@ public class RMatrix {
         let array = self.array
         return array.reduce("") {
             (acc, rowVals) in acc + rowVals.reduce("") {
-                (ac, colVals) in ac + "\(colVals)"
+                (ac, colVals) in ac + "\(colVals) "
             } + "\n"
         }
     }

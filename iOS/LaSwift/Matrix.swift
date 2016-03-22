@@ -215,6 +215,14 @@ public class Matrix {
         }
     }
     
+    public var description: String {
+        var str = "** real **\n"
+        str += self.realPart.description + "\n"
+        str += "** imag **\n"
+        str += self.imagPart.description + "\n"
+        return str
+    }
+    
     private func checkRow(row: Int) -> Int {
         assert(row >= 0 && row < self.rows)
         return row >= 0 ? row : self.rows + row

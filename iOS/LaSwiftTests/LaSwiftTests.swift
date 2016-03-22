@@ -21,10 +21,37 @@ class LaSwiftTests: XCTestCase {
         super.tearDown()
     }
     
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    func testComplex() {
+        let a = Complex(real: 1, imag: -1)
+        let b = Complex(real: 2.1, imag: 3)
+        let c = a + b
+        let cAns = Complex(real: 3.1, imag: 2)
+        XCTAssertTrue(c == cAns)
+        
+        let d = a * b
+        let dAns = Complex(real: 2.1 + 3, imag: 3 - 2.1)
+        XCTAssertTrue(d == dAns)
+        
+        let e = a - b
+        let eAns = Complex(real: -1.1, imag: -4.0)
+        XCTAssertTrue(e == eAns)
+        
+        let f = -2.0 * b * -3.0
+        XCTAssertTrue(f == Complex(real: -4.2 * -3.0, imag: 18))
     }
+    
+    func testRMatrix() {
+        let a:[[Double]] = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 20, 30]]
+        let b:[[Double]] = [[-1, -2, -1], [-1, -1, -1], [2, 2, 2], [-10, -10, -10]]
+        
+        let A = RMatrix(array: a)
+        let B = RMatrix(array: b)
+        
+        let C = A + B
+        print(C.description)
+        
+    }
+    
     
     func testPerformanceExample() {
         // This is an example of a performance test case.

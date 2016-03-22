@@ -1,5 +1,5 @@
 //
-//  Mathematics.swift
+//  BasicMath.swift
 //  LaSwift
 //
 // Created by Ikuo Kudo on 20,March,2016
