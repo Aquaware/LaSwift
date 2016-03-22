@@ -174,7 +174,7 @@ public class Matrix {
         set(value) {
             let theRow = checkRow(row)
             let theCol = checkCol(col)
-            if !value.isImagPerfectZero {
+            if !value.isImagZero {
                 if self.isReal {
                     self.real[theRow, theCol] = value.real
                 }
@@ -184,7 +184,7 @@ public class Matrix {
                     self.real[theRow, theCol] = value.real
                 }
             }
-            else if !value.isRealPerfectZero {
+            else if !value.isRealZero {
                 if self.isReal {
                     self.real[theRow, theCol] = value.real
                 }

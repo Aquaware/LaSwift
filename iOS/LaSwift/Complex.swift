@@ -11,27 +11,27 @@ import Accelerate
 public class Complex {
     var real: Double = 0.0
     var imag: Double = 0.0
-    var isRealPerfectZero = true
-    var isImagPerfectZero = true
+    var isRealZero = true
+    var isImagZero = true
     
     init() {
     }
     
     init(real: Double) {
         self.real = real
-        self.isRealPerfectZero = false
+        self.isRealZero = false
     }
     
     init(imag: Double) {
         self.imag = imag
-        self.isImagPerfectZero = false
+        self.isImagZero = false
     }
     
     init(real: Double, imag: Double) {
         self.real = real
         self.imag = imag
-        self.isRealPerfectZero = false
-        self.isImagPerfectZero = false
+        self.isRealZero = false
+        self.isImagZero = false
     }
     
     public static var unitImag: Complex {
@@ -40,7 +40,7 @@ public class Complex {
     
     public var description: String {
         var str = "\(self.real) "
-        if !isImagPerfectZero {
+        if !isImagZero {
             if self.imag >= 0 {
                 str += "+ \(self.imag)j \n"
             }

@@ -17,25 +17,25 @@ public func + (left: Complex, right: Double) -> Complex {
 }
 
 public func + (left: Complex, right: Complex) -> Complex {
-    if left.isImagPerfectZero && left.isRealPerfectZero && right.isImagPerfectZero && right.isRealPerfectZero {
+    if left.isImagZero && left.isRealZero && right.isImagZero && right.isRealZero {
         return Complex()
     }
-    else if left.isRealPerfectZero && right.isRealPerfectZero {
-        if left.isImagPerfectZero {
+    else if left.isRealZero && right.isRealZero {
+        if left.isImagZero {
             return Complex(real: right.real)
         }
-        else if right.isImagPerfectZero {
+        else if right.isImagZero {
             return Complex(real: left.real)
         }
         else {
             return Complex(real: left.real + right.real)
         }
     }
-    else if left.isImagPerfectZero && right.isImagPerfectZero {
-        if left.isRealPerfectZero {
+    else if left.isImagZero && right.isImagZero {
+        if left.isRealZero {
             return Complex(imag: right.imag)
         }
-        else if right.isRealPerfectZero {
+        else if right.isRealZero {
             return Complex(imag: left.imag)
         }
         else {
@@ -64,25 +64,25 @@ public func - (left: Complex, right: Double) -> Complex {
 }
 
 public func - (left: Complex, right: Complex) -> Complex {
-    if left.isImagPerfectZero && left.isRealPerfectZero && right.isImagPerfectZero && right.isRealPerfectZero {
+    if left.isImagZero && left.isRealZero && right.isImagZero && right.isRealZero {
         return Complex()
     }
-    else if left.isRealPerfectZero && right.isRealPerfectZero {
-        if left.isImagPerfectZero {
+    else if left.isRealZero && right.isRealZero {
+        if left.isImagZero {
             return Complex(real: -right.real)
         }
-        else if right.isImagPerfectZero {
+        else if right.isImagZero {
             return Complex(real: left.real)
         }
         else {
             return Complex(real: left.real - right.real)
         }
     }
-    else if left.isImagPerfectZero && right.isImagPerfectZero {
-        if left.isRealPerfectZero {
+    else if left.isImagZero && right.isImagZero {
+        if left.isRealZero {
             return Complex(imag: -right.imag)
         }
-        else if right.isRealPerfectZero {
+        else if right.isRealZero {
             return Complex(imag: left.imag)
         }
         else {
@@ -111,10 +111,10 @@ public func * (left: Complex, right: Double) -> Complex {
 }
 
 public func * (left: Complex, right: Complex) -> Complex {
-    if left.isRealPerfectZero && right.isRealPerfectZero && !left.isImagPerfectZero && !right.isImagPerfectZero {
+    if left.isRealZero && right.isRealZero && !left.isImagZero && !right.isImagZero {
         return Complex(real: left.real * right.real)
     }
-    else if !left.isRealPerfectZero && !right.isRealPerfectZero && left.isImagPerfectZero && right.isImagPerfectZero {
+    else if !left.isRealZero && !right.isRealZero && left.isImagZero && right.isImagZero {
         return Complex(real: -left.imag * right.imag)
     }
     else {
@@ -128,7 +128,7 @@ public func *= (inout left: Complex, right: Double) {
 }
 
 public func == (left: Complex, right: Complex) -> Bool {
-    if left.isRealPerfectZero != right.isRealPerfectZero || left.isImagPerfectZero != right.isImagPerfectZero {
+    if left.isRealZero != right.isRealZero || left.isImagZero != right.isImagZero {
         return false
     }
     
