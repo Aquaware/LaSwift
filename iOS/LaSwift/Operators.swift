@@ -135,6 +135,15 @@ public func == (left: Complex, right: Complex) -> Bool {
     return (left.real == right.real && left.imag == right.imag) ? true : false
 }
 
+public func ~= (left: Complex, right: Complex) -> Bool {
+    let eps = 1e-10
+    if (left.real - right.real) > eps || (left.imag - right.imag) > eps {
+        return false
+    }
+    
+    return (left.real == right.real && left.imag == right.imag) ? true : false
+}
+
 func != (left: Complex, right: Complex) -> Bool {
     return !(left == right)
 }
@@ -197,16 +206,33 @@ public func -= (inout left: RMatrix, right: RMatrix) {
     left = left - right
 }
 
+public func * (left: RMatrix, right: Double) -> RMatrix {
+    let splat = la_splat_from_double(right, la_attribute_t(LA_DEFAULT_ATTRIBUTES))
+    return RMatrix(la: la_elementwise_product(left.la, splat))
+}
+
+public func * (left: RMatrix, right: Complex) -> Matrix {
+    if right.isRealZero && right.isImagZero {
+        return Matrix()
+    }
+    else if right.isRealZero {
+        return Matrix(imag: left * right.imag)
+    }
+    else if right.isImagZero {
+        return Matrix(real: left * right.real)
+    }
+    else {
+        return Matrix(real: left * right.real, imag: left * right.imag)
+    }
+}
+
 public func * (left: Double, right: RMatrix) -> RMatrix {
     let splat = la_splat_from_double(left, la_attribute_t(LA_DEFAULT_ATTRIBUTES))
     let mul = la_elementwise_product( splat, right.la)
     return RMatrix(la: mul)
 }
 
-public func * (left: RMatrix, right: Double) -> RMatrix {
-    let splat = la_splat_from_double(right, la_attribute_t(LA_DEFAULT_ATTRIBUTES))
-    return RMatrix(la: la_elementwise_product(left.la, splat))
-}
+
 
 public func * (left: RMatrix, right: RMatrix) -> RMatrix {
     if left.isOneElement {
@@ -219,6 +245,14 @@ public func * (left: RMatrix, right: RMatrix) -> RMatrix {
         assert(left.rowSize == right.rowSize && left.colSize == right.colSize)
         return RMatrix(la: la_elementwise_product(left.la, right.la))
     }
+}
+
+public func *= (inout left: RMatrix, right: Double) {
+    return left = left * right
+}
+
+public func *= (inout left: RMatrix, right: RMatrix) {
+    return left = left * right
 }
 
 public prefix func - (matrix: RMatrix) -> RMatrix {

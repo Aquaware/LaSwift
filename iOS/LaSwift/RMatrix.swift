@@ -123,7 +123,7 @@ public class RMatrix {
         let flat = self.flat
         self.rows = rows
         self.cols = cols
-        la_release(self.la)
+        // la_release(self.la)
         self.la = la_matrix_from_double_buffer( flat,
                                                 la_count_t(self.rows),
                                                 la_count_t(self.cols),
@@ -240,7 +240,7 @@ public class RMatrix {
             let index = col + row * self.rows
             assert(index >= 0 && index < self.cols * self.rows)
             buffer[index] = value
-            la_release(self.la)
+            // la_release(self.la)
             self.la = la_matrix_from_double_buffer( buffer,
                                                     la_count_t(self.rows),
                                                     la_count_t(self.cols),

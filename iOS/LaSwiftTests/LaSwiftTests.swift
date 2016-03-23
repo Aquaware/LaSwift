@@ -38,6 +38,19 @@ class LaSwiftTests: XCTestCase {
         
         let f = -2.0 * b * -3.0
         XCTAssertTrue(f == Complex(real: -4.2 * -3.0, imag: 18))
+        
+        let g = a * 2.0
+        XCTAssertTrue(g == Complex(real: 2, imag: -2))
+        
+        var h = b.copy()
+        h *= 2.0
+        XCTAssertTrue(h == Complex(real: 4.2, imag: 6))
+        
+        h += 3.0
+        XCTAssertTrue(h == Complex(real: 7.2, imag: 6))
+        
+        h -= 1.1
+        XCTAssertTrue(h == Complex(real: 6.1, imag: 6))
     }
     
     func testRMatrix() {
@@ -50,6 +63,11 @@ class LaSwiftTests: XCTestCase {
         let C = A + B
         print(C.description)
         
+        let D = A * B
+        print(D.description)
+        
+        let E = A.copy()
+        print(E.description)
     }
     
     

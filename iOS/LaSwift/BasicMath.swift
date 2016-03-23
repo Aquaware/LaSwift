@@ -9,6 +9,23 @@
 import Darwin
 import Accelerate
 
+extension Complex {
+    public func copy() -> Complex {
+        if(self.isRealZero && self.isImagZero) {
+            return Complex()
+        }
+        else if self.isRealZero {
+            return Complex(imag: self.imag)
+        }
+        else if self.isImagZero {
+            return Complex(real: self.real)
+        }
+        else {
+            return Complex(real: self.real, imag: self.imag)
+        }
+    }
+}
+
 extension RMatrix {
     
     public func copy() -> RMatrix {
@@ -48,7 +65,7 @@ extension RMatrix {
         let clousure = { (array: [Double]) -> Double in
             return self.calcSum(array)
         }
-        return calc(axis, clousure: clousure)
+        return calc(axis, closure: clousure)
     }
     
     public func max() -> Double {
@@ -56,10 +73,10 @@ extension RMatrix {
     }
     
     public func max(axis: Int) -> RMatrix {
-        let clousure = { (array: [Double]) -> Double in
+        let closure = { (array: [Double]) -> Double in
             return self.calcMax(array)
         }
-        return calc(axis, clousure: clousure)
+        return calc(axis, closure: closure)
     }
 
     public func min() -> Double {
@@ -67,10 +84,10 @@ extension RMatrix {
     }
     
     public func min(axis: Int) -> RMatrix {
-        let clousure = { (array: [Double]) -> Double in
+        let closure = { (array: [Double]) -> Double in
             return self.calcMin(array)
         }
-        return calc(axis, clousure: clousure)
+        return calc(axis, closure: closure)
     }
     
     public func mean() -> Double {
@@ -78,10 +95,10 @@ extension RMatrix {
     }
     
     public func mean(axis: Int) -> RMatrix {
-        let clousure = { (array: [Double]) -> Double in
+        let closure = { (array: [Double]) -> Double in
             return self.calcMean(array)
         }
-        return calc(axis, clousure: clousure)
+        return calc(axis, closure: closure)
     }
     
     public func variance() -> Double {
@@ -274,13 +291,13 @@ extension RMatrix {
     }
     
     
-    private func calc(axis: Int, clousure: ([Double]) -> Double) -> RMatrix {
+    private func calc(axis: Int, closure: ([Double]) -> Double) -> RMatrix {
         var result: [Double]
         if axis == 0 {
             result = [Double](count: self.colSize, repeatedValue: 0.0)
             for var i = 0; i < self.colSize; i++ {
                 let vector = slice(self.la, rowRange: 0..<self.rowSize, colRange: i..<i+1)
-                result[i] = clousure(vector)
+                result[i] = closure(vector)
             }
             return RMatrix(array: result, rows: 1, cols: self.colSize)
         }
@@ -288,7 +305,7 @@ extension RMatrix {
             result = [Double](count: self.rowSize, repeatedValue: 0.0)
             for var i = 0; i < self.rowSize; i++ {
                 let vector = slice(self.la, rowRange: i..<i, colRange: 0..<self.colSize)
-                result[i] = clousure(vector)
+                result[i] = closure(vector)
             }
             return RMatrix(array: result, rows: self.colSize, cols: 1)
         }
