@@ -9,96 +9,96 @@
 import Accelerate
 
 public class Matrix {
-    private var real: RMatrix! = nil
-    private var isReal: Bool = false
-    private var imag: RMatrix! = nil
-    private var isImag: Bool = false
-    private var rows: Int = 0
-    private var cols: Int = 0
+    private var real_: RMatrix! = nil
+    private var isReal_: Bool = false
+    private var imag_: RMatrix! = nil
+    private var isImag_: Bool = false
+    private var rows_: Int = 0
+    private var cols_: Int = 0
     
     init() {
     }
     
     init(real: [Double], rows: Int, cols: Int) {
-        self.rows = rows
-        self.cols = cols
-        self.real = RMatrix(array: real, rows: rows, cols: cols)
-        self.isReal = true
+        self.rows_ = rows
+        self.cols_ = cols
+        self.real_ = RMatrix(array: real, rows: rows, cols: cols)
+        self.isReal_ = true
     }
     
     init(real: [[Double]]) {
-        self.rows = real.count
-        self.cols = real.first!.count
-        self.real = RMatrix(array: real)
-        self.isReal = true
+        self.rows_ = real.count
+        self.cols_ = real.first!.count
+        self.real_ = RMatrix(array: real)
+        self.isReal_ = true
     }
     
     init(imag: [Double], rows: Int, cols: Int) {
-        self.imag = RMatrix(array: imag, rows: rows, cols: cols)
-        self.isImag = true
+        self.imag_ = RMatrix(array: imag, rows: rows, cols: cols)
+        self.isImag_ = true
     }
     
     init(imag: [[Double]]) {
-        self.rows = imag.count
-        self.cols = imag.first!.count
-        self.imag = RMatrix(array: imag)
-        self.isImag = true
+        self.rows_ = imag.count
+        self.cols_ = imag.first!.count
+        self.imag_ = RMatrix(array: imag)
+        self.isImag_ = true
     }
     
     init(real: [Double], imag: [Double], rows: Int, cols: Int) {
         assert(real.count == imag.count)
-        self.rows = rows
-        self.cols = cols
-        self.real = RMatrix(array: real, rows: rows, cols: cols)
-        self.isReal = true
-        self.imag = RMatrix(array: imag, rows: rows, cols: cols)
-        self.isImag = true
+        self.rows_ = rows
+        self.cols_ = cols
+        self.real_ = RMatrix(array: real, rows: rows, cols: cols)
+        self.isReal_ = true
+        self.imag_ = RMatrix(array: imag, rows: rows, cols: cols)
+        self.isImag_ = true
     }
     
     init(real: [[Double]], imag: [[Double]]) {
         assert(real.count == imag.count && real.first!.count == imag.first!.count)
-        self.rows = real.count
-        self.cols = real.first!.count
-        self.real = RMatrix(array: real)
-        self.isReal = true
-        self.imag = RMatrix(array: imag)
-        self.isImag = true
+        self.rows_ = real.count
+        self.cols_ = real.first!.count
+        self.real_ = RMatrix(array: real)
+        self.isReal_ = true
+        self.imag_ = RMatrix(array: imag)
+        self.isImag_ = true
     }
     
     init(real: RMatrix) {
-        self.rows = real.rowSize
-        self.cols = real.colSize
-        self.real = real
-        self.isReal = true
+        self.rows_ = real.rows
+        self.cols_ = real.cols
+        self.real_ = real
+        self.isReal_ = true
     }
     
     init(imag: RMatrix) {
-        self.rows = imag.rowSize
-        self.cols = imag.colSize
-        self.imag = imag
-        self.isImag = true
+        self.rows_ = imag.rows
+        self.cols_ = imag.cols
+        self.imag_ = imag
+        self.isImag_ = true
     }
 
     init(real: RMatrix, imag: RMatrix) {
-        assert(real.rowSize == imag.rowSize && real.colSize == imag.colSize)
-        self.rows = real.rowSize
-        self.cols = real.colSize
-        self.real = real
-        self.isReal = true
-        self.imag = imag
-        self.isImag = true
+        assert(real.rows == imag.rows && real.cols == imag.cols)
+        self.rows_ = real.rows
+        self.cols_ = real.cols
+        self.real_ = real
+        self.isReal_ = true
+        self.imag_ = imag
+        self.isImag_ = true
     }
 
     public var shape: (Int, Int) {
         return (self.rows, self.cols)
     }
     
-    public var rowSize: Int {
-        return self.rows
+    public var rows: Int {
+        return self.rows_
     }
     
-    public var colSize: Int {
-        return self.cols
+    public var cols: Int {
+        return self.cols_
     }
 
     public var isOneElement: Bool {
@@ -119,13 +119,13 @@ public class Matrix {
     
     public final var T: Matrix {
         if self.isReal && self.isImag {
-            return Matrix(real: self.real.T, imag: self.imag.T)
+            return Matrix(real: self.real_.T, imag: self.imag_.T)
         }
         else if self.isReal {
-            return Matrix(real: self.real.T)
+            return Matrix(real: self.real_.T)
         }
         else if self.isImag {
-            return Matrix(imag: self.imag.T)
+            return Matrix(imag: self.imag_.T)
         }
         else {
             return Matrix()
@@ -136,21 +136,21 @@ public class Matrix {
         return self[0, 0]
     }
     
-    public final var realPart: RMatrix {
-        return self.real
+    public final var real: RMatrix {
+        return self.real_
     }
     
-    public final var imagPart: RMatrix {
-        return self.imag
+    public final var imag: RMatrix {
+        return self.imag_
     }
 
 
-    public final var isRealPart: Bool {
-        return self.isReal
+    public final var isReal: Bool {
+        return self.isReal_
     }
     
-    public final var isImagPart: Bool {
-        return self.isImag
+    public final var isImag: Bool {
+        return self.isImag_
     }
     
     subscript (row: Int, col: Int) -> Complex {
@@ -174,23 +174,23 @@ public class Matrix {
         set(value) {
             let theRow = checkRow(row)
             let theCol = checkCol(col)
-            if !value.isImagZero {
+            if !value.isImag {
                 if self.isReal {
                     self.real[theRow, theCol] = value.real
                 }
                 else {
-                    self.real = RMatrix.zeros(self.rows, cols: self.cols)
-                    self.isReal = true
+                    self.real_ = RMatrix.zeros(self.rows, cols: self.cols)
+                    self.isReal_ = true
                     self.real[theRow, theCol] = value.real
                 }
             }
-            else if !value.isRealZero {
+            else if !value.isReal {
                 if self.isReal {
                     self.real[theRow, theCol] = value.real
                 }
                 else {
-                    self.real = RMatrix.zeros(self.rows, cols: self.cols)
-                    self.isReal = true
+                    self.real_ = RMatrix.zeros(self.rows, cols: self.cols)
+                    self.isReal_ = true
                     self.real[theRow, theCol] = value.real
                 }
             }
@@ -217,9 +217,9 @@ public class Matrix {
     
     public var description: String {
         var str = "** real **\n"
-        str += self.realPart.description + "\n"
+        str += self.real.description + "\n"
         str += "** imag **\n"
-        str += self.imagPart.description + "\n"
+        str += self.imag.description + "\n"
         return str
     }
     

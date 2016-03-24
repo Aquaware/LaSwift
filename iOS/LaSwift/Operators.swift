@@ -17,25 +17,25 @@ public func + (left: Complex, right: Double) -> Complex {
 }
 
 public func + (left: Complex, right: Complex) -> Complex {
-    if left.isImagZero && left.isRealZero && right.isImagZero && right.isRealZero {
+    if left.isImag && left.isReal && right.isImag && right.isReal {
         return Complex()
     }
-    else if left.isRealZero && right.isRealZero {
-        if left.isImagZero {
+    else if left.isReal && right.isReal {
+        if left.isImag {
             return Complex(real: right.real)
         }
-        else if right.isImagZero {
+        else if right.isImag {
             return Complex(real: left.real)
         }
         else {
             return Complex(real: left.real + right.real)
         }
     }
-    else if left.isImagZero && right.isImagZero {
-        if left.isRealZero {
+    else if left.isImag && right.isImag {
+        if left.isReal {
             return Complex(imag: right.imag)
         }
-        else if right.isRealZero {
+        else if right.isReal {
             return Complex(imag: left.imag)
         }
         else {
@@ -64,25 +64,25 @@ public func - (left: Complex, right: Double) -> Complex {
 }
 
 public func - (left: Complex, right: Complex) -> Complex {
-    if left.isImagZero && left.isRealZero && right.isImagZero && right.isRealZero {
+    if left.isImag && left.isReal && right.isImag && right.isReal {
         return Complex()
     }
-    else if left.isRealZero && right.isRealZero {
-        if left.isImagZero {
+    else if left.isReal && right.isReal {
+        if left.isImag {
             return Complex(real: -right.real)
         }
-        else if right.isImagZero {
+        else if right.isImag {
             return Complex(real: left.real)
         }
         else {
             return Complex(real: left.real - right.real)
         }
     }
-    else if left.isImagZero && right.isImagZero {
-        if left.isRealZero {
+    else if left.isImag && right.isImag {
+        if left.isReal {
             return Complex(imag: -right.imag)
         }
-        else if right.isRealZero {
+        else if right.isReal {
             return Complex(imag: left.imag)
         }
         else {
@@ -111,10 +111,10 @@ public func * (left: Complex, right: Double) -> Complex {
 }
 
 public func * (left: Complex, right: Complex) -> Complex {
-    if left.isRealZero && right.isRealZero && !left.isImagZero && !right.isImagZero {
+    if left.isReal && right.isReal && !left.isImag && !right.isImag {
         return Complex(real: left.real * right.real)
     }
-    else if !left.isRealZero && !right.isRealZero && left.isImagZero && right.isImagZero {
+    else if !left.isReal && !right.isReal && left.isImag && right.isImag {
         return Complex(real: -left.imag * right.imag)
     }
     else {
@@ -127,8 +127,25 @@ public func *= (inout left: Complex, right: Double) {
     left = left * right
 }
 
+public func / (left: Complex, right: Complex) -> Complex {
+    if left.isImag && right.isImag {
+        return Complex(real: right.real / left.real)
+    }
+    else {
+        let lower = left.real * left.real + left.imag * left.imag
+        return Complex( real: (left.real * right.real + left.imag * right.imag) / lower,
+                        imag: (left.real * right.imag - left.imag * right.real) / lower)
+    }
+    
+}
+
+public func /= (inout left: Complex, right: Complex) {
+    left = left / right
+}
+
+
 public func == (left: Complex, right: Complex) -> Bool {
-    if left.isRealZero != right.isRealZero || left.isImagZero != right.isImagZero {
+    if left.isReal != right.isReal || left.isImag != right.isImag {
         return false
     }
     
@@ -170,7 +187,7 @@ public func + (left: RMatrix, right: RMatrix) -> RMatrix {
         return left + right.first
     }
     else {
-        assert(left.rowSize == right.rowSize && left.colSize == right.colSize)
+        assert(left.rows == right.rows && left.cols == right.cols)
         return RMatrix(la: la_sum(left.la, right.la))
     }
 }
@@ -197,7 +214,7 @@ public func - (left: RMatrix, right: RMatrix) -> RMatrix {
         return left - right.first
     }
     else {
-        assert(left.rowSize == right.rowSize && left.colSize == right.colSize)
+        assert(left.rows == right.rows && left.cols == right.cols)
         return RMatrix(la: la_difference(left.la, right.la))
     }
 }
@@ -212,13 +229,13 @@ public func * (left: RMatrix, right: Double) -> RMatrix {
 }
 
 public func * (left: RMatrix, right: Complex) -> Matrix {
-    if right.isRealZero && right.isImagZero {
+    if right.isReal && right.isImag {
         return Matrix()
     }
-    else if right.isRealZero {
+    else if right.isReal {
         return Matrix(imag: left * right.imag)
     }
-    else if right.isImagZero {
+    else if right.isImag {
         return Matrix(real: left * right.real)
     }
     else {
@@ -242,7 +259,7 @@ public func * (left: RMatrix, right: RMatrix) -> RMatrix {
         return left * right.first
     }
     else {
-        assert(left.rowSize == right.rowSize && left.colSize == right.colSize)
+        assert(left.rows == right.rows && left.cols == right.cols)
         return RMatrix(la: la_elementwise_product(left.la, right.la))
     }
 }
@@ -277,18 +294,18 @@ public func / (left: RMatrix, right: Double) -> RMatrix {
 }
 
 public func / (left: RMatrix, right: RMatrix) -> RMatrix {
-    assert(left.rowSize == left.colSize)
+    assert(left.rows == left.cols)
     return RMatrix(la: la_solve(left.la, right.la))
 }
 
 public func > (left: RMatrix, right: Double) -> RMatrix {
     let flat = left.flat
     let array = flat.map{$0 > right ? 1.0 : -1.0}
-    return RMatrix(array: array, rows: left.rowSize, cols: left.colSize)
+    return RMatrix(array: array, rows: left.rows, cols: left.cols)
 }
 
 public func == (left: RMatrix, right: RMatrix) -> Bool {
-    if left.rowSize != right.rowSize || left.colSize != right.colSize {
+    if left.rows != right.rows || left.cols != right.cols {
         return false
     }
     
@@ -302,50 +319,50 @@ func != (left: RMatrix, right: RMatrix) -> Bool {
 // ------------
 
 public func + (left: Double, right: Matrix) -> Matrix {
-    if right.isRealPart && right.isImagPart {
-        return Matrix(real: left + right.realPart, imag: right.imagPart)
+    if right.isReal && right.isImag {
+        return Matrix(real: left + right.real, imag: right.imag)
     }
-    else if right.isRealPart{
-        return Matrix(real: left + right.realPart)
+    else if right.isReal{
+        return Matrix(real: left + right.real)
     }
-    else if right.isImagPart {
-        let real = RMatrix(value: left, rows: right.rowSize, cols: right.colSize)
-        return Matrix(real: real, imag: right.imagPart)
+    else if right.isImag {
+        let real = RMatrix(value: left, rows: right.rows, cols: right.cols)
+        return Matrix(real: real, imag: right.imag)
     }
     else {
-        let real = RMatrix(value: left, rows: right.rowSize, cols: right.colSize)
+        let real = RMatrix(value: left, rows: right.rows, cols: right.cols)
         return Matrix(real: real)
     }
 }
 
 public func + (left: Matrix, right: Double) -> Matrix {
-    if left.isRealPart && left.isImagPart {
-        return Matrix(real: right + left.realPart, imag: left.imagPart)
+    if left.isReal && left.isImag {
+        return Matrix(real: right + left.real, imag: left.imag)
     }
-    else if left.isRealPart{
-        return Matrix(real: right + left.realPart)
+    else if left.isReal{
+        return Matrix(real: right + left.real)
     }
-    else if left.isImagPart {
-        let real = RMatrix(value: right, rows: left.rowSize, cols: left.colSize)
-        return Matrix(real: real, imag: left.imagPart)
+    else if left.isImag {
+        let real = RMatrix(value: right, rows: left.rows, cols: left.cols)
+        return Matrix(real: real, imag: left.imag)
     }
     else {
-        let real = RMatrix(value: right, rows: left.rowSize, cols: left.colSize)
+        let real = RMatrix(value: right, rows: left.rows, cols: left.cols)
         return Matrix(real: real)
     }
 }
 
 public func + (left: Complex, right: Matrix) -> Matrix {
-    if right.isRealPart && right.isImagPart {
-        return Matrix(real: left.real + right.realPart, imag: left.imag + right.imagPart)
+    if right.isReal && right.isImag {
+        return Matrix(real: left.real + right.real, imag: left.imag + right.imag)
     }
-    else if right.isRealPart {
-        let imag = RMatrix(value: left.imag, rows: right.rowSize, cols: right.colSize)
-        return Matrix(real: left.real + right.realPart, imag: imag)
+    else if right.isReal {
+        let imag = RMatrix(value: left.imag, rows: right.rows, cols: right.cols)
+        return Matrix(real: left.real + right.real, imag: imag)
     }
-    else if right.isImagPart {
-        let real = RMatrix(value: left.real, rows: right.rowSize, cols: right.colSize)
-        return Matrix(real: real, imag: left.imag + right.imagPart)
+    else if right.isImag {
+        let real = RMatrix(value: left.real, rows: right.rows, cols: right.cols)
+        return Matrix(real: real, imag: left.imag + right.imag)
     }
     else {
         return Matrix()
@@ -360,8 +377,8 @@ public func + (left: Matrix, right: Matrix) -> Matrix {
         return left + right.first.real
     }
     else {
-        assert(left.rowSize == right.rowSize && left.colSize == right.colSize)
-        return Matrix(real: left.realPart + right.realPart, imag: left.imagPart + right.imagPart)
+        assert(left.rows == right.rows && left.cols == right.cols)
+        return Matrix(real: left.real + right.real, imag: left.imag + right.imag)
     }
 }
 
@@ -370,50 +387,50 @@ public func += (inout left: Matrix, right: Matrix) {
 }
 
 public func - (left: Double, right: Matrix) -> Matrix {
-    if right.isRealPart && right.isImagPart {
-        return Matrix(real: left - right.realPart, imag: right.imagPart)
+    if right.isReal && right.isImag {
+        return Matrix(real: left - right.real, imag: right.imag)
     }
-    else if right.isRealPart{
-        return Matrix(real: left - right.realPart)
+    else if right.isReal{
+        return Matrix(real: left - right.real)
     }
-    else if right.isImagPart {
-        let real = RMatrix(value: left, rows: right.rowSize, cols: right.colSize)
-        return Matrix(real: real, imag: right.imagPart)
+    else if right.isImag {
+        let real = RMatrix(value: left, rows: right.rows, cols: right.cols)
+        return Matrix(real: real, imag: right.imag)
     }
     else {
-        let real = RMatrix(value: left, rows: right.rowSize, cols: right.colSize)
+        let real = RMatrix(value: left, rows: right.rows, cols: right.cols)
         return Matrix(real: real)
     }
 }
 
 public func - (left: Matrix, right: Double) -> Matrix {
-    if left.isRealPart && left.isImagPart {
-        return Matrix(real: right - left.realPart, imag: left.imagPart)
+    if left.isReal && left.isImag {
+        return Matrix(real: right - left.real, imag: left.imag)
     }
-    else if left.isRealPart{
-        return Matrix(real: right - left.realPart)
+    else if left.isReal{
+        return Matrix(real: right - left.real)
     }
-    else if left.isImagPart {
-        let real = RMatrix(value: -right, rows: left.rowSize, cols: left.colSize)
-        return Matrix(real: real, imag: left.imagPart)
+    else if left.isImag {
+        let real = RMatrix(value: -right, rows: left.rows, cols: left.cols)
+        return Matrix(real: real, imag: left.imag)
     }
     else {
-        let real = RMatrix(value: right, rows: left.rowSize, cols: left.colSize)
+        let real = RMatrix(value: right, rows: left.rows, cols: left.cols)
         return Matrix(real: real)
     }
 }
 
 public func - (left: Complex, right: Matrix) -> Matrix {
-    if right.isRealPart && right.isImagPart {
-        return Matrix(real: left.real - right.realPart, imag: left.imag - right.imagPart)
+    if right.isReal && right.isImag {
+        return Matrix(real: left.real - right.real, imag: left.imag - right.imag)
     }
-    else if right.isRealPart {
-        let imag = RMatrix(value: left.imag, rows: right.rowSize, cols: right.colSize)
-        return Matrix(real: left.real - right.realPart, imag: imag)
+    else if right.isReal {
+        let imag = RMatrix(value: left.imag, rows: right.rows, cols: right.cols)
+        return Matrix(real: left.real - right.real, imag: imag)
     }
-    else if right.isImagPart {
-        let real = RMatrix(value: left.real, rows: right.rowSize, cols: right.colSize)
-        return Matrix(real: real, imag: left.imag - right.imagPart)
+    else if right.isImag {
+        let real = RMatrix(value: left.real, rows: right.rows, cols: right.cols)
+        return Matrix(real: real, imag: left.imag - right.imag)
     }
     else {
         return Matrix()
@@ -428,8 +445,8 @@ public func - (left: Matrix, right: Matrix) -> Matrix {
         return left - right.first.real
     }
     else {
-        assert(left.rowSize == right.rowSize && left.colSize == right.colSize)
-        return Matrix(real: left.realPart - right.realPart, imag: left.imagPart - right.imagPart)
+        assert(left.rows == right.rows && left.cols == right.cols)
+        return Matrix(real: left.real - right.real, imag: left.imag - right.imag)
     }
 }
 
@@ -438,14 +455,14 @@ public func -= (inout left: Matrix, right: Matrix) {
 }
 
 public func * (left: Double, right: Matrix) -> Matrix {
-    if right.isRealPart && right.isImagPart {
-        return Matrix(real: left * right.realPart, imag: left * right.imagPart)
+    if right.isReal && right.isImag {
+        return Matrix(real: left * right.real, imag: left * right.imag)
     }
-    else if right.isRealPart{
-        return Matrix(real: left * right.realPart)
+    else if right.isReal{
+        return Matrix(real: left * right.real)
     }
-    else if right.isImagPart {
-        return Matrix(imag: left * right.imagPart)
+    else if right.isImag {
+        return Matrix(imag: left * right.imag)
     }
     else {
         return Matrix()
@@ -453,14 +470,14 @@ public func * (left: Double, right: Matrix) -> Matrix {
 }
 
 public func * (left: Matrix, right: Double) -> Matrix {
-    if left.isRealPart && left.isImagPart {
-        return Matrix(real: right * left.realPart, imag: right * left.imagPart)
+    if left.isReal && left.isImag {
+        return Matrix(real: right * left.real, imag: right * left.imag)
     }
-    else if left.isRealPart{
-        return Matrix(real: right * left.realPart)
+    else if left.isReal{
+        return Matrix(real: right * left.real)
     }
-    else if left.isImagPart {
-        return Matrix(imag: right * left.imagPart)
+    else if left.isImag {
+        return Matrix(imag: right * left.imag)
     }
     else {
         return Matrix()
@@ -468,17 +485,17 @@ public func * (left: Matrix, right: Double) -> Matrix {
 }
 
 public func * (left: Complex, right: Matrix) -> Matrix {
-    if right.isRealPart && right.isImagPart {
-        let real = left.real * right.realPart - left.imag * right.imagPart
-        let imag = left.imag * right.realPart + right.realPart * left.imag
+    if right.isReal && right.isImag {
+        let real = left.real * right.real - left.imag * right.imag
+        let imag = left.imag * right.real + right.real * left.imag
         return Matrix(real: real, imag: imag)
     }
-    else if right.isRealPart {
-        let imag = RMatrix(value: left.imag, rows: right.rowSize, cols: right.colSize)
-        return Matrix(real: left.real - right.realPart, imag: imag)
+    else if right.isReal {
+        let imag = RMatrix(value: left.imag, rows: right.rows, cols: right.cols)
+        return Matrix(real: left.real - right.real, imag: imag)
     }
-    else if right.isImagPart {
-        return Matrix(real: left.real * right.realPart)
+    else if right.isImag {
+        return Matrix(real: left.real * right.real)
     }
     else {
         return Matrix()
@@ -493,9 +510,9 @@ public func * (left: Matrix, right: Matrix) -> Matrix {
         return left * right.first.real
     }
     else {
-        assert(left.rowSize == right.rowSize && left.colSize == right.colSize)
-        let real = left.realPart * right.realPart - left.imagPart * right.imagPart
-        let imag = left.imagPart * right.realPart + right.realPart * left.imagPart
+        assert(left.rows == right.rows && left.cols == right.cols)
+        let real = left.real * right.real - left.imag * right.imag
+        let imag = left.imag * right.real + right.real * left.imag
         return Matrix(real: real, imag: imag)
     }
 }
@@ -505,12 +522,12 @@ public func *= (inout left: Matrix, right: Matrix) {
 }
 
 public func == (left: Matrix, right: Matrix) -> Bool {
-    if left.isRealPart != right.isRealPart || left.isImagPart != right.isImagPart {
+    if left.isReal != right.isReal || left.isImag != right.isImag {
         return false
     }
 
-    if left.realPart == right.realPart {
-        return (left.imagPart == right.imagPart) ? true : false
+    if left.real == right.real {
+        return (left.imag == right.imag) ? true : false
     }
     else {
         return false

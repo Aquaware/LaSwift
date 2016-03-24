@@ -10,15 +10,15 @@ import Accelerate
 
 public class RMatrix {
     public var la: la_object_t! = nil
-    private var rows: Int = 0
-    private var cols: Int = 0
+    private var rows_: Int = 0
+    private var cols_: Int = 0
 
     init() {        
     }
     
     init(array: [[Double]]) {
-        self.rows = array.count
-        self.cols = array.first!.count
+        self.rows_ = array.count
+        self.cols_ = array.first!.count
         assert(self.rows > 0 && self.cols > 0)
         var buffer = [Double](count: self.rows * self.cols, repeatedValue: 0.0)
         for var i = 0; i < self.rows; i++ {
@@ -36,8 +36,8 @@ public class RMatrix {
     }
     
     init(array: [Double], rows: Int, cols: Int) {
-        self.rows = rows
-        self.cols = cols
+        self.rows_ = rows
+        self.cols_ = cols
         self.la = la_matrix_from_double_buffer( array,
                                                 la_count_t(self.rows),
                                                 la_count_t(self.cols),
@@ -47,20 +47,20 @@ public class RMatrix {
     }
     
     init(value: Double, rows: Int, cols: Int) {
-        self.rows = rows
-        self.cols = cols
+        self.rows_ = rows
+        self.cols_ = cols
         let array = [Double](count: rows * cols, repeatedValue: value)
         self.la = la_matrix_from_double_buffer( array,
-            la_count_t(self.rows),
-            la_count_t(self.cols),
-            la_count_t(self.cols),
+            la_count_t(rows),
+            la_count_t(cols),
+            la_count_t(cols),
             la_hint_t(LA_NO_HINT),
             la_attribute_t(LA_DEFAULT_ATTRIBUTES))
     }
     
     init(la: la_object_t) {
-        self.rows = Int(la_matrix_rows(la))
-        self.cols = Int(la_matrix_cols(la))
+        self.rows_ = Int(la_matrix_rows(la))
+        self.cols_ = Int(la_matrix_cols(la))
         self.la = la
     }
     
@@ -68,12 +68,12 @@ public class RMatrix {
         return (self.rows, self.cols)
     }
     
-    public var rowSize: Int {
-        return self.rows
+    public var rows: Int {
+        return self.rows_
     }
     
-    public var colSize: Int {
-        return self.cols
+    public var cols: Int {
+        return self.cols_
     }
     
     public var flat: [Double] {
@@ -121,8 +121,8 @@ public class RMatrix {
     public final func reshape(rows: Int, cols: Int) -> RMatrix {
         assert(rows * cols == self.rows * self.cols)
         let flat = self.flat
-        self.rows = rows
-        self.cols = cols
+        self.rows_ = rows
+        self.cols_ = cols
         // la_release(self.la)
         self.la = la_matrix_from_double_buffer( flat,
                                                 la_count_t(self.rows),

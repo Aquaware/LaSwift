@@ -11,13 +11,13 @@ import Accelerate
 
 extension Complex {
     public func copy() -> Complex {
-        if(self.isRealZero && self.isImagZero) {
+        if(self.isReal && self.isImag) {
             return Complex()
         }
-        else if self.isRealZero {
+        else if self.isReal {
             return Complex(imag: self.imag)
         }
-        else if self.isImagZero {
+        else if self.isImag {
             return Complex(real: self.real)
         }
         else {
@@ -30,18 +30,18 @@ extension RMatrix {
     
     public func copy() -> RMatrix {
         let array = self.flat
-        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+        return RMatrix(array: array, rows: self.rows, cols: self.cols)
     }
     
     public func sort() {
-        let count = self.rowSize * self.colSize
+        let count = self.rows * self.cols
         var array = self.flat
         vDSP_vsortD(&array, UInt(count), 1)
         la_release(self.la)
         self.la = la_matrix_from_double_buffer( array,
-                                                la_count_t(self.rowSize),
-                                                la_count_t(self.colSize),
-                                                la_count_t(self.colSize),
+                                                la_count_t(self.rows),
+                                                la_count_t(self.cols),
+                                                la_count_t(self.cols),
                                                 la_hint_t(LA_NO_HINT),
                                                 la_attribute_t(LA_DEFAULT_ATTRIBUTES))
     }
@@ -102,9 +102,9 @@ extension RMatrix {
     }
     
     public func variance() -> Double {
-        assert(self.rowSize > 0 && self.colSize > 0)
+        assert(self.rows > 0 && self.cols > 0)
         let square = (self - self.mean()) * (self - self.mean())
-        return square.sum() / Double(self.rowSize) / Double(self.colSize)
+        return square.sum() / Double(self.rows) / Double(self.cols)
     }
     
     public func std() -> Double {
@@ -112,156 +112,156 @@ extension RMatrix {
     }
     
     public func absolute() -> RMatrix{
-        let count = self.rowSize * self.colSize
+        let count = self.rows * self.cols
         var array = [Double](count: count, repeatedValue: 0.0)
         vvfabs(&array, self.flat, [Int32(count)])
         
-        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+        return RMatrix(array: array, rows: self.rows, cols: self.cols)
     }
     
     public func sqrt() -> RMatrix{
-        let count = self.rowSize * self.colSize
+        let count = self.rows * self.cols
         var array = [Double](count: count, repeatedValue: 0.0)
         vvsqrt(&array, self.flat, [Int32(count)])
         
-        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+        return RMatrix(array: array, rows: self.rows, cols: self.cols)
     }
     
     public func pow(y: RMatrix) -> RMatrix {
-        assert(self.rowSize == y.rowSize && self.colSize == y.colSize)
-        let count = self.rowSize * self.colSize
+        assert(self.rows == y.rows && self.cols == y.cols)
+        let count = self.rows * self.cols
         var array = [Double](count: count, repeatedValue: 0.0)
         vvpow(&array, self.flat, y.flat, [Int32(count)])
         
-        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+        return RMatrix(array: array, rows: self.rows, cols: self.cols)
     }
     
     public func exp() -> RMatrix {
-        let count = self.rowSize * self.colSize
+        let count = self.rows * self.cols
         var array = [Double](count: count, repeatedValue: 0.0)
         vvexp(&array, self.flat, [Int32(count)])
         
-        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+        return RMatrix(array: array, rows: self.rows, cols: self.cols)
     }
     
     public func ln() -> RMatrix {
-        let count = self.rowSize * self.colSize
+        let count = self.rows * self.cols
         var array = [Double](count: count, repeatedValue: 0.0)
         vvlog(&array, self.flat, [Int32(count)])
         
-        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+        return RMatrix(array: array, rows: self.rows, cols: self.cols)
     }
     
     public func log2() -> RMatrix {
-        let count = self.rowSize * self.colSize
+        let count = self.rows * self.cols
         var array = [Double](count: count, repeatedValue: 0.0)
         vvlog2(&array, self.flat, [Int32(count)])
         
-        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+        return RMatrix(array: array, rows: self.rows, cols: self.cols)
     }
     
     public func log10() -> RMatrix {
-        let count = self.rowSize * self.colSize
+        let count = self.rows * self.cols
         var array = [Double](count: count, repeatedValue: 0.0)
         vvlog10(&array, self.flat, [Int32(count)])
         
-        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+        return RMatrix(array: array, rows: self.rows, cols: self.cols)
     }
     
     public func ceil() -> RMatrix {
-        let count = self.rowSize * self.colSize
+        let count = self.rows * self.cols
         var array = [Double](count: count, repeatedValue: 0.0)
         vvceil(&array, self.flat, [Int32(count)])
         
-        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+        return RMatrix(array: array, rows: self.rows, cols: self.cols)
     }
     
     public func floor() -> RMatrix {
-        let count = self.rowSize * self.colSize
+        let count = self.rows * self.cols
         var array = [Double](count: count, repeatedValue: 0.0)
         vvfloor(&array, self.flat, [Int32(count)])
         
-        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+        return RMatrix(array: array, rows: self.rows, cols: self.cols)
     }
     
     public func round() -> RMatrix {
-        let count = self.rowSize * self.colSize
+        let count = self.rows * self.cols
         var array = [Double](count: count, repeatedValue: 0.0)
         vvnint(&array, self.flat, [Int32(count)])
         
-        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+        return RMatrix(array: array, rows: self.rows, cols: self.cols)
     }
     
     public func sin() -> RMatrix {
-        let count = self.rowSize * self.colSize
+        let count = self.rows * self.cols
         var array = [Double](count: count, repeatedValue: 0.0)
         vvsin(&array, self.flat, [Int32(count)])
         
-        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+        return RMatrix(array: array, rows: self.rows, cols: self.cols)
     }
     
     public func cos() -> RMatrix {
-        let count = self.rowSize * self.colSize
+        let count = self.rows * self.cols
         var array = [Double](count: count, repeatedValue: 0.0)
         vvcos(&array, self.flat, [Int32(count)])
         
-        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+        return RMatrix(array: array, rows: self.rows, cols: self.cols)
     }
     
     public func tan() -> RMatrix {
-        let count = self.rowSize * self.colSize
+        let count = self.rows * self.cols
         var array = [Double](count: count, repeatedValue: 0.0)
         vvtan(&array, self.flat, [Int32(count)])
         
-        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+        return RMatrix(array: array, rows: self.rows, cols: self.cols)
     }
     
     public func sinh() -> RMatrix {
-        let count = self.rowSize * self.colSize
+        let count = self.rows * self.cols
         var array = [Double](count: count, repeatedValue: 0.0)
         vvsinh(&array, self.flat, [Int32(count)])
         
-        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+        return RMatrix(array: array, rows: self.rows, cols: self.cols)
     }
     
     public func cosh() -> RMatrix {
-        let count = self.rowSize * self.colSize
+        let count = self.rows * self.cols
         var array = [Double](count: count, repeatedValue: 0.0)
         vvcosh(&array, self.flat, [Int32(count)])
         
-        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+        return RMatrix(array: array, rows: self.rows, cols: self.cols)
     }
     
     public func tanh() -> RMatrix {
-        let count = self.rowSize * self.colSize
+        let count = self.rows * self.cols
         var array = [Double](count: count, repeatedValue: 0.0)
         vvtanh(&array, self.flat, [Int32(count)])
         
-        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+        return RMatrix(array: array, rows: self.rows, cols: self.cols)
     }
     
     public func asinh() -> RMatrix {
-        let count = self.rowSize * self.colSize
+        let count = self.rows * self.cols
         var array = [Double](count: count, repeatedValue: 0.0)
         vvasinh(&array, self.flat, [Int32(count)])
         
-        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+        return RMatrix(array: array, rows: self.rows, cols: self.cols)
     }
     
     public func acosh() -> RMatrix {
-        let count = self.rowSize * self.colSize
+        let count = self.rows * self.cols
         var array = [Double](count: count, repeatedValue: 0.0)
         vvacosh(&array, self.flat, [Int32(count)])
         
-        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+        return RMatrix(array: array, rows: self.rows, cols: self.cols)
     }
     
     public func atanh() -> RMatrix {
-        let count = self.rowSize * self.colSize
+        let count = self.rows * self.cols
         var array = [Double](count: count, repeatedValue: 0.0)
         vvatanh(&array, self.flat, [Int32(count)])
         
-        return RMatrix(array: array, rows: self.rowSize, cols: self.colSize)
+        return RMatrix(array: array, rows: self.rows, cols: self.cols)
     }
 
     // ---
@@ -294,20 +294,20 @@ extension RMatrix {
     private func calc(axis: Int, closure: ([Double]) -> Double) -> RMatrix {
         var result: [Double]
         if axis == 0 {
-            result = [Double](count: self.colSize, repeatedValue: 0.0)
-            for var i = 0; i < self.colSize; i++ {
-                let vector = slice(self.la, rowRange: 0..<self.rowSize, colRange: i..<i+1)
+            result = [Double](count: self.cols, repeatedValue: 0.0)
+            for var i = 0; i < self.cols; i++ {
+                let vector = slice(self.la, rowRange: 0..<self.rows, colRange: i..<i+1)
                 result[i] = closure(vector)
             }
-            return RMatrix(array: result, rows: 1, cols: self.colSize)
+            return RMatrix(array: result, rows: 1, cols: self.cols)
         }
         else if axis == 1 {
-            result = [Double](count: self.rowSize, repeatedValue: 0.0)
-            for var i = 0; i < self.rowSize; i++ {
-                let vector = slice(self.la, rowRange: i..<i, colRange: 0..<self.colSize)
+            result = [Double](count: self.rows, repeatedValue: 0.0)
+            for var i = 0; i < self.rows; i++ {
+                let vector = slice(self.la, rowRange: i..<i, colRange: 0..<self.cols)
                 result[i] = closure(vector)
             }
-            return RMatrix(array: result, rows: self.colSize, cols: 1)
+            return RMatrix(array: result, rows: self.cols, cols: 1)
         }
         else {
             return RMatrix()
@@ -336,20 +336,20 @@ extension RMatrix {
 extension Matrix {
     
     public func copy() -> Matrix {
-        let real = self.realPart
-        let imag = self.imagPart
+        let real = self.real
+        let imag = self.imag
         return Matrix(real: real, imag: imag)
     }
     
     public func sort() {
-        let count = self.rowSize * self.colSize
-        var array = self.realPart.flat
+        let count = self.rows * self.cols
+        var array = self.real.flat
         vDSP_vsortD(&array, UInt(count), 1)
-        la_release(self.realPart.la)
-        self.realPart.la = la_matrix_from_double_buffer( array,
-            la_count_t(self.rowSize),
-            la_count_t(self.colSize),
-            la_count_t(self.colSize),
+        la_release(self.real.la)
+        self.real.la = la_matrix_from_double_buffer( array,
+            la_count_t(self.rows),
+            la_count_t(self.cols),
+            la_count_t(self.cols),
             la_hint_t(LA_NO_HINT),
             la_attribute_t(LA_DEFAULT_ATTRIBUTES))
     }
@@ -365,105 +365,101 @@ extension Matrix {
         return Matrix(real: array, rows: rows, cols: cols)
     }
     
-
-    
     public func sum(axis: Int) -> Matrix {
-        return Matrix(real: self.realPart.sum(axis), imag: self.imagPart.sum(axis))
+        return Matrix(real: self.real.sum(axis), imag: self.imag.sum(axis))
     }
     
     public func max(axis: Int) -> Matrix {
-        return Matrix(real: self.realPart.max(axis), imag: self.imagPart.max(axis))
+        return Matrix(real: self.real.max(axis), imag: self.imag.max(axis))
     }
 
-    
     public func min(axis: Int) -> Matrix {
-          return Matrix(real: self.realPart.min(axis), imag: self.imagPart.min(axis))
+          return Matrix(real: self.real.min(axis), imag: self.imag.min(axis))
     }
-
     
     public func mean(axis: Int) -> Matrix {
-        return Matrix(real: self.realPart.mean(axis), imag: self.imagPart.mean(axis))
+        return Matrix(real: self.real.mean(axis), imag: self.imag.mean(axis))
     }
     
     public func variance() -> Double {
-        assert(self.rowSize > 0 && self.colSize > 0)
-        return self.realPart.variance()
+        assert(self.rows > 0 && self.cols > 0)
+        return self.real.variance()
     }
     
     public func std() -> Double {
-        return self.realPart.std()
+        return self.real.std()
     }
     
     public func absolute() -> Matrix{
-        return Matrix(real:self.realPart.absolute())
+        return Matrix(real:self.real.absolute())
     }
     
     public func sqrt() -> Matrix{
-        return Matrix(real:self.realPart.sqrt())
+        return Matrix(real:self.real.sqrt())
     }
     
     public func exp() -> Matrix {
-        return Matrix(real:self.realPart.exp())
+        return Matrix(real:self.real.exp())
     }
     
     public func ln() -> Matrix {
-        return Matrix(real:self.realPart.ln())
+        return Matrix(real:self.real.ln())
     }
     
     public func log2() -> Matrix {
-        return Matrix(real:self.realPart.log2())
+        return Matrix(real:self.real.log2())
     }
     
     public func log10() -> Matrix {
-        return Matrix(real:self.realPart.log10())
+        return Matrix(real:self.real.log10())
     }
     
     public func ceil() -> Matrix {
-        return Matrix(real:self.realPart.ceil())
+        return Matrix(real:self.real.ceil())
     }
     
     public func floor() -> Matrix {
-        return Matrix(real:self.realPart.floor())
+        return Matrix(real:self.real.floor())
     }
     
     public func round() -> Matrix {
-        return Matrix(real:self.realPart.round())
+        return Matrix(real:self.real.round())
     }
     
     public func sin() -> Matrix {
-        return Matrix(real:self.realPart.sin())
+        return Matrix(real:self.real.sin())
     }
     
     public func cos() -> Matrix {
-        return Matrix(real:self.realPart.cos())
+        return Matrix(real:self.real.cos())
     }
     
     public func tan() -> Matrix {
-        return Matrix(real:self.realPart.tan())
+        return Matrix(real:self.real.tan())
     }
     
     public func sinh() -> Matrix {
-        return Matrix(real:self.realPart.sinh())
+        return Matrix(real:self.real.sinh())
     }
     
     public func cosh() -> Matrix {
-        return Matrix(real:self.realPart.cosh())
+        return Matrix(real:self.real.cosh())
     }
     
     public func tanh() -> Matrix {
-        return Matrix(real:self.realPart.tanh())
+        return Matrix(real:self.real.tanh())
     }
     
     public func asinh() -> Matrix {
-        return Matrix(real:self.realPart.asinh())
+        return Matrix(real:self.real.asinh())
     }
     
     public func acosh() -> Matrix {
-        return Matrix(real:self.realPart.acosh())
+        return Matrix(real:self.real.acosh())
     }
     
     public func atanh() -> Matrix {
-        return Matrix(real:self.realPart.atanh())
+        return Matrix(real:self.real.atanh())
     }
 
 }
