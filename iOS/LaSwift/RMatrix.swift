@@ -275,22 +275,12 @@ public class RMatrix {
     
     private func checkRow(row: Int) -> Int {
         assert(row >= 0 && row < self.rows)
-        if row >= 0 {
-            return row
-        }
-        else {
-            return self.rows + row
-        }
+        return (row >= 0) ?  row : self.rows + row
     }
     
     private func checkCol(col: Int) -> Int {
         assert(col >= 0 && col < self.cols)
-        if col >= 0 {
-            return col
-        }
-        else {
-            return self.cols + col
-        }
+        return (col >= 0) ?  col : self.cols + col
     }
 
 }
