@@ -8,6 +8,8 @@
 
 import Accelerate
 
+public let EPS: Double = 1e-50
+
 public class RMatrix {
     public var la: la_object_t! = nil
     private var rows_: Int = 0
@@ -164,11 +166,11 @@ public class RMatrix {
         return RMatrix(la: la)
     }
     
-    public func inv() -> RMatrix {
+    public func invert() -> RMatrix {
         var flat = self.flat
         for var i = 0; i < self.rows * self.cols; i++ {
             let value:Double = flat[i]
-            if abs(value) > 1e-50 {
+            if abs(value) > EPS {
                 flat[i] = 1.0 / value
             }
             else {

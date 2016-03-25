@@ -153,8 +153,7 @@ public func == (left: Complex, right: Complex) -> Bool {
 }
 
 public func ~= (left: Complex, right: Complex) -> Bool {
-    let eps = 1e-10
-    if (left.real - right.real) > eps || (left.imag - right.imag) > eps {
+    if (left.real - right.real) > EPS || (left.imag - right.imag) > EPS {
         return false
     }
     
@@ -278,13 +277,13 @@ public prefix func - (matrix: RMatrix) -> RMatrix {
 
 public func / (left: Double, right: RMatrix) -> RMatrix {
     let splat = la_splat_from_double(left, la_attribute_t(LA_DEFAULT_ATTRIBUTES))
-    let mul = la_elementwise_product(splat, right.inv().la)
+    let mul = la_elementwise_product(splat, right.invert().la)
     return RMatrix(la: mul)
 }
 
 public func / (left: RMatrix, right: Double) -> RMatrix {
     var value = 0.0
-    if abs(right) > 1e-50 {
+    if abs(right) > EPS {
         value = 1.0 / right
     }
     
