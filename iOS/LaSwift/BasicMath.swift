@@ -37,7 +37,7 @@ extension RMatrix {
         let count = self.rows * self.cols
         var array = self.flat
         vDSP_vsortD(&array, UInt(count), 1)
-        la_release(self.la)
+        //la_release(self.la)
         self.la = la_matrix_from_double_buffer( array,
                                                 la_count_t(self.rows),
                                                 la_count_t(self.cols),
@@ -346,12 +346,12 @@ extension Matrix {
         var array = self.real.flat
         vDSP_vsortD(&array, UInt(count), 1)
         la_release(self.real.la)
-        self.real.la = la_matrix_from_double_buffer( array,
-            la_count_t(self.rows),
-            la_count_t(self.cols),
-            la_count_t(self.cols),
-            la_hint_t(LA_NO_HINT),
-            la_attribute_t(LA_DEFAULT_ATTRIBUTES))
+        self.real.la = la_matrix_from_double_buffer(    array,
+                                                        la_count_t(self.rows),
+                                                        la_count_t(self.cols),
+                                                        la_count_t(self.cols),
+                                                        la_hint_t(LA_NO_HINT),
+                                                        la_attribute_t(LA_DEFAULT_ATTRIBUTES))
     }
     
     public static func rand(rows: Int, cols: Int) -> Matrix {
