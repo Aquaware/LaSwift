@@ -108,13 +108,48 @@ extension RMatrix {
         assert(info == 0)
         return RMatrix(array: array, rows: 1, cols: self.cols)
     }
+    
+    public func eigenValue() -> Matrix {
+        var jobvl = Int8(78) // 'N' or 'V'
+        var jobvr = Int8(78) // "V"
+        var n = __CLPK_integer(self.rows)
+        let aArray = self.flat
+        let a = UnsafeMutablePointer<__CLPK_doublereal>(aArray)
+        var lda = n
+        let bArray = [Double](count: self.rows, repeatedValue: 0.0)
+        let b = UnsafeMutablePointer<__CLPK_doublereal>(bArray)
+        var ldb = n
+        let alpharArray = [Double](count: self.rows, repeatedValue: 0.0)
+        let alphar = UnsafeMutablePointer<__CLPK_doublereal>(alpharArray)
+        let alphaiArray = [Double](count: self.rows, repeatedValue: 0.0)
+        let alphai = UnsafeMutablePointer<__CLPK_doublereal>(alphaiArray)
+        let betaArray = [Double](count: self.rows, repeatedValue: 0.0)
+        let beta = UnsafeMutablePointer<__CLPK_doublereal>(betaArray)
+        let vlArray = [Double](count: self.rows, repeatedValue: 0.0)
+        let vl = UnsafeMutablePointer<__CLPK_doublereal>(vlArray)
+        var ldvl = n
+        let vrArray = [Double](count: self.rows, repeatedValue: 0.0)
+        let vr = UnsafeMutablePointer<__CLPK_doublereal>(vrArray)
+        var ldvr = n
+        let workArray = [Double](count: self.rows, repeatedValue: 0.0)
+        let work = UnsafeMutablePointer<__CLPK_doublereal>(workArray)
+        var lwork = n
+        var info = __CLPK_integer(0)
+
+        dggev_(&jobvl, &jobvr, &n, a, &lda, b, &ldb, alphar, alphai, beta, vl, &ldvl, vr, &ldvr, work, &lwork, &info)
+        assert(info == 0)
+        
+        let eigenValue = Matrix(real: alpharArray, imag: alphaiArray, rows: self.rows, cols: 1)
+        let bMat = RMatrix(array: betaArray, rows: self.rows, cols: 1)
+        
+        return eigenValue / bMat
+    }
 }
 
 extension Matrix {
-
         
         public func gesv() -> Matrix {
-            
+        
             // A * x = b
             //
             // A: matrix(n x n)

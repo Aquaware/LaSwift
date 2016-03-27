@@ -520,6 +520,13 @@ public func *= (inout left: Matrix, right: Matrix) {
     left = left * right
 }
 
+public func / (left: Matrix, right: RMatrix) -> Matrix {
+    assert(left.rows == right.rows && left.cols == right.cols)
+    let real = left.real / right
+    let imag = left.imag / right
+    return Matrix(real: real, imag: imag)
+}
+
 public func == (left: Matrix, right: Matrix) -> Bool {
     if left.isReal != right.isReal || left.isImag != right.isImag {
         return false
