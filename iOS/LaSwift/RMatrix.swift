@@ -29,35 +29,20 @@ public class RMatrix {
             let item = array[i]
             buffer[begin..<end] = item[0..<self.cols]
         }
-        self.la = la_matrix_from_double_buffer( buffer,
-                                                la_count_t(self.rows),
-                                                la_count_t(self.cols),
-                                                la_count_t(self.cols),
-                                                la_hint_t(LA_NO_HINT),
-                                                la_attribute_t(LA_DEFAULT_ATTRIBUTES))
+        self.la = toLaObject(buffer, rows: self.rows, cols: self.cols)
     }
     
     init(array: [Double], rows: Int, cols: Int) {
         self.rows_ = rows
         self.cols_ = cols
-        self.la = la_matrix_from_double_buffer( array,
-                                                la_count_t(self.rows),
-                                                la_count_t(self.cols),
-                                                la_count_t(self.cols),
-                                                la_hint_t(LA_NO_HINT),
-                                                la_attribute_t(LA_DEFAULT_ATTRIBUTES))
+        self.la = toLaObject(array, rows: self.rows, cols: self.cols)
     }
     
     init(value: Double, rows: Int, cols: Int) {
         self.rows_ = rows
         self.cols_ = cols
         let array = [Double](count: rows * cols, repeatedValue: value)
-        self.la = la_matrix_from_double_buffer( array,
-            la_count_t(rows),
-            la_count_t(cols),
-            la_count_t(cols),
-            la_hint_t(LA_NO_HINT),
-            la_attribute_t(LA_DEFAULT_ATTRIBUTES))
+        self.la = toLaObject(array, rows: self.rows, cols: self.cols)
     }
     
     init(la: la_object_t) {
@@ -85,12 +70,12 @@ public class RMatrix {
     }
     
     public var array: [[Double]] {
-        let list = self.flat
+        let flat = self.flat
         var array = [[Double]]()
         for var i = 0; i < self.rows; i++ {
             let begin = i * self.cols
             let end = begin + self.cols - 1
-            let item = Array(list[begin...end])
+            let item = Array(flat[begin...end])
             array.append(item)
         }
         return array
@@ -125,13 +110,7 @@ public class RMatrix {
         let flat = self.flat
         self.rows_ = rows
         self.cols_ = cols
-        // la_release(self.la)
-        self.la = la_matrix_from_double_buffer( flat,
-                                                la_count_t(self.rows),
-                                                la_count_t(self.cols),
-                                                la_count_t(self.cols),
-                                                la_hint_t(LA_NO_HINT),
-                                                la_attribute_t(LA_DEFAULT_ATTRIBUTES))
+        self.la = toLaObject( flat, rows: self.rows, cols: self.cols)
         return RMatrix(la: la)
     }
     
@@ -164,6 +143,35 @@ public class RMatrix {
                                     la_count_t(rowRange.endIndex - rowRange.startIndex),
                                     la_count_t(colRange.endIndex - colRange.startIndex) )
         return RMatrix(la: la)
+    }
+    
+    public func insert(array: [[Double]], axis: Int = 0) {
+        let rows = array.count
+        let cols = array.first!.count
+        if axis == 0 {
+            assert(self.cols == cols)
+            self.rows += rows
+            var flat = self.flat
+            flat += array.flatten()
+            self.la = toLaObject(flat, rows: self.rows, cols: self.cols)            
+        }
+        else {
+            assert(self.rows == rows)
+            self.cols += cols
+            var buffer = [Double](count: self.cols * self.rows, repeatedValue: 0.0)
+            var index: Int = 0
+            for var row = 0; row < self.rows; row++ {
+                for var col = 0; col < self.cols; col++ {
+                    buffer[index] = self[row, col]
+                    index++
+                }
+                for var col = 0; col < cols; col++ {
+                    buffer[index] = array[row][col]
+                    index++
+                }
+            }
+            self.la = toLaObject(flat, rows: self.rows, cols: self.cols)  
+        }
     }
     
     public func invert() -> RMatrix {
@@ -224,7 +232,7 @@ public class RMatrix {
     subscript (row: Int, col: Int) -> Double {
         get {
             let theRow = checkRow(row)
-            let theCol = checkRow(col)
+            let theCol = checkCol(col)
             var array = [0.0]
             let slice = la_matrix_slice(   self.la,
                                             la_index_t(theRow),
@@ -239,30 +247,38 @@ public class RMatrix {
         
         set(value) {
             var buffer = self.flat
-            let index = col + row * self.rows
+            let index = col + row * self.cols
             assert(index >= 0 && index < self.cols * self.rows)
             buffer[index] = value
-            // la_release(self.la)
-            self.la = la_matrix_from_double_buffer( buffer,
-                                                    la_count_t(self.rows),
-                                                    la_count_t(self.cols),
-                                                    1,
-                                                    la_hint_t(LA_NO_HINT),
-                                                    la_attribute_t(LA_DEFAULT_ATTRIBUTES))
+            self.la = toLaObject(buffer, rows: self.rows, cols: self.cols)
         }
     }
     
-    subscript (row: Int) -> RMatrix {
+    subscript (rowOrColumn: Int) -> RMatrix {
         get {
-            let theRow = checkRow(row)
-            let slice = la_matrix_slice(   self.la,
-                                            la_index_t(theRow),
+            if self.isRowVector {
+                let col = checkCol(rowOrColumn)
+                let array: [Double] = [0.0]
+                array[0] = self[0, col]
+                return RMatrix(array: array, rows: 1, cols: 1)
+            }
+            else if self.isColVector {
+                let row = checkRow(rowOrColumn)
+                let array: [Double] = [0.0]
+                array[0] = self[row, 0]
+                return RMatrix(array: array, rows: 1, cols: 1)
+            }
+            else {
+                let row = checkRow(rowOrColumn)
+                let slice = la_matrix_slice(   self.la,
+                                            la_index_t(row),
                                             0,
                                             1,
                                             1,
                                             1,
                                             la_count_t(self.cols))
-            return RMatrix(la: slice)
+                return RMatrix(la: slice)
+            }        
         }
     }
     
@@ -275,6 +291,16 @@ public class RMatrix {
         }
     }
     
+    public func toLaObject(array: [Double], rows: Int, cols: Int) -> la_object_t {
+        let laObject = la_matrix_from_double_buffer( array,
+                                                la_count_t(rows),
+                                                la_count_t(cols),
+                                                la_count_t(cols),
+                                                la_hint_t(LA_NO_HINT),
+                                                la_attribute_t(LA_DEFAULT_ATTRIBUTES))
+       return laObject
+    }                            
+                                                
     private func checkRow(row: Int) -> Int {
         assert(row >= 0 && row < self.rows)
         return (row >= 0) ?  row : self.rows + row
