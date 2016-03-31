@@ -150,14 +150,14 @@ public class RMatrix {
         let cols = array.first!.count
         if axis == 0 {
             assert(self.cols == cols)
-            self.rows += rows
+            self.rows_ += rows
             var flat = self.flat
             flat += array.flatten()
             self.la = toLaObject(flat, rows: self.rows, cols: self.cols)            
         }
         else {
             assert(self.rows == rows)
-            self.cols += cols
+            self.cols_ += cols
             var buffer = [Double](count: self.cols * self.rows, repeatedValue: 0.0)
             var index: Int = 0
             for var row = 0; row < self.rows; row++ {

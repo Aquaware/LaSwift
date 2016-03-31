@@ -292,9 +292,41 @@ public func / (left: RMatrix, right: Double) -> RMatrix {
     return RMatrix(la: mul)
 }
 
+public func % (left: RMatrix, right: RMatrix) -> RMatrix {
+    assert(left.rows == right.rows && left.cols == right.cols)
+    let size = left.rows * left.cols
+    var buffer = [Double] (count: size, repeatedValue: 0.0)
+    for var i = 0; i < size; i++ {
+        buffer[i] = left.flat[i] / right.flat[i]
+    }
+    return RMatrix(array: buffer, rows: left.rows, cols: right.cols)
+}
+
 public func / (left: RMatrix, right: RMatrix) -> RMatrix {
     assert(left.rows == left.cols)
     return RMatrix(la: la_solve(left.la, right.la))
+}
+
+public func << (shift: Int) -> RMatrix {
+    assert(shift >= 0 && shift < self.cols)
+    var array = [Double](count: self.rows, repeatedValue: [Double](count: self.cols, repeatedValue: 0.0))
+    for var row = 0; row < self.rows; row++ {
+        for var col = shift; col < self.cols; col++ {
+            array[row][col - shift] = self[row][col]
+        }
+    }
+    return RMatrix(array: array)
+}
+
+public func >> (shift: Int) -> RMatrix {
+    assert(shift >= 0 && shift < self.cols)
+    var array = [Double](count: self.rows, repeatedValue: [Double](count: self.cols, repeatedValue: 0.0))
+    for var row = 0; row < self.rows; row++ {
+        for var col = 0; col < self.cols; col++ {
+            array[row][col + shift] = self[row][col]
+        }
+    }
+    return RMatrix(array: array)
 }
 
 public func > (left: RMatrix, right: Double) -> RMatrix {
