@@ -188,6 +188,77 @@ public class RMatrix {
         return RMatrix(array: flat, rows: self.rows, cols: self.cols)
     }
     
+    // (axis : 0) shift > 0 : shift to down, shift < 0 : shift to up
+    // (axis : 1) shift > 0 : shift to right, shift < 0 : shift to left
+    public func shift(shift: Int, padding: Double = 0.0, axis: Int = 1) -> RMatrix {
+        if axis == 0 {
+            assert(abs(shift) < self.rows)
+            var array = [Double](count: self.rows, repeatedValue: [Double](count: self.cols, repeatedValue: padding))
+            for var col = 0; col < self.cols; col++ {
+                for var row = 0; row < self.rows; row++ {
+                    var newRow = row + shift
+                    if newRow >= 0 && newRow < self.rows {
+                        array[newRow][col] = self[row][col]
+                    }
+                }
+            }
+            return RMatrix(array: array)
+        }
+        else {
+            assert(abs(shift) < self.cols)
+            var array = [Double](count: self.rows, repeatedValue: [Double](count: self.cols, repeatedValue: padding))
+            for var row = 0; row < self.rows; row++ {
+                for var col = 0; col < self.cols; col++ {
+                    var newCol = col + shift
+                    if newCol >= 0 && newCol < self.cols {
+                        array[row][newCol] = self[row][col]
+                    }
+                }
+            }
+            return RMatrix(array: array)
+        }
+    }
+
+    public func roll (shift: Int, axis: Int = 0) -> RMatrix {
+        if axis == 0 {
+            assert(abs(shift) < self.rows)
+            var array = [Double](count: self.rows, repeatedValue: [Double](count: self.cols, repeatedValue: padding))
+            for var col = 0; col < self.cols; col++ {
+                for var row = 0; row < self.rows; row++ {
+                    var newRow = row + shift
+                    if newRow >= self.rows {
+                        newRow -= self.rows
+                    }
+                    else if newRow < 0 {
+                        newRow += self.rows
+                    }
+                    array[newRow][col] = self[row][col]
+                }
+            }
+            return RMatrix(array: array)
+        }
+        else {
+            assert(abs(shift) < self.cols)
+            var array = [Double](count: self.rows, repeatedValue: [Double](count: self.cols, repeatedValue: padding))
+            for var row = 0; row < self.rows; row++ {
+                for var col = 0; col < self.cols; col++ {
+                    var newCol = col + shift
+                    if newCol >= self.cols {
+                        newCol -= self.cols
+                    }
+                    else newCol < 0 {
+                        newCols += self.cols
+                    }
+                    if newCol >= 0 && newCol < self.cols {
+                        array[row][newCol] = self[row][col]
+                    }
+                }
+            }
+            return RMatrix(array: array)
+        }
+    }
+
+    
     public static func identity(dimension: Int = 1) -> RMatrix {
         let la = la_identity_matrix(    la_count_t(dimension),
                                         la_scalar_type_t(LA_SCALAR_TYPE_DOUBLE),

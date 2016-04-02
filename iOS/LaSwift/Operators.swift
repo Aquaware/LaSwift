@@ -307,26 +307,20 @@ public func / (left: RMatrix, right: RMatrix) -> RMatrix {
     return RMatrix(la: la_solve(left.la, right.la))
 }
 
-public func << (shift: Int) -> RMatrix {
-    assert(shift >= 0 && shift < self.cols)
-    var array = [Double](count: self.rows, repeatedValue: [Double](count: self.cols, repeatedValue: 0.0))
-    for var row = 0; row < self.rows; row++ {
-        for var col = shift; col < self.cols; col++ {
-            array[row][col - shift] = self[row][col]
-        }
-    }
-    return RMatrix(array: array)
+public func << (left: RMatrix, right: Int) -> RMatrix {
+    left.shiftToLeft(right)
 }
 
-public func >> (shift: Int) -> RMatrix {
-    assert(shift >= 0 && shift < self.cols)
-    var array = [Double](count: self.rows, repeatedValue: [Double](count: self.cols, repeatedValue: 0.0))
-    for var row = 0; row < self.rows; row++ {
-        for var col = 0; col < self.cols; col++ {
-            array[row][col + shift] = self[row][col]
-        }
-    }
-    return RMatrix(array: array)
+public func <<= (inout left: RMatrix, right: Int) {
+    left = left << right
+}
+
+public func >> (left: RMatrix, right: Int) -> RMatrix {
+    left.shiftToRight(right)
+}
+
+public func >>= (inout left: RMatrix, right: Int) {
+    left = left >> right
 }
 
 public func > (left: RMatrix, right: Double) -> RMatrix {
