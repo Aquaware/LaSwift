@@ -23,7 +23,7 @@ public class RMatrix {
         self.cols_ = array.first!.count
         assert(self.rows > 0 && self.cols > 0)
         var buffer = [Double](count: self.rows * self.cols, repeatedValue: 0.0)
-        for var i = 0; i < self.rows; i++ {
+        for i in 0 ..< self.rows {
             let begin = i * self.cols
             let end = begin + self.cols
             let item = array[i]
@@ -72,7 +72,7 @@ public class RMatrix {
     public var array: [[Double]] {
         let flat = self.flat
         var array = [[Double]]()
-        for var i = 0; i < self.rows; i++ {
+        for i in 0 ..< self.rows {
             let begin = i * self.cols
             let end = begin + self.cols - 1
             let item = Array(flat[begin...end])
@@ -160,14 +160,14 @@ public class RMatrix {
             self.cols_ += cols
             var buffer = [Double](count: self.cols * self.rows, repeatedValue: 0.0)
             var index: Int = 0
-            for var row = 0; row < self.rows; row++ {
-                for var col = 0; col < self.cols; col++ {
+            for row in 0 ..< self.rows {
+                for col in 0 ..< self.cols {
                     buffer[index] = self[row, col]
-                    index++
+                    index += 1
                 }
-                for var col = 0; col < cols; col++ {
+                for col in 0 ..< cols {
                     buffer[index] = array[row][col]
-                    index++
+                    index += 1
                 }
             }
             self.la = toLaObject(flat, rows: self.rows, cols: self.cols)  
@@ -176,7 +176,7 @@ public class RMatrix {
     
     public func invert() -> RMatrix {
         var flat = self.flat
-        for var i = 0; i < self.rows * self.cols; i++ {
+        for i in 0 ..< self.rows * self.cols {
             let value:Double = flat[i]
             if abs(value) > EPS {
                 flat[i] = 1.0 / value
@@ -193,25 +193,25 @@ public class RMatrix {
     public func shift(shift: Int, padding: Double = 0.0, axis: Int = 1) -> RMatrix {
         if axis == 0 {
             assert(abs(shift) < self.rows)
-            var array = [Double](count: self.rows, repeatedValue: [Double](count: self.cols, repeatedValue: padding))
-            for var col = 0; col < self.cols; col++ {
-                for var row = 0; row < self.rows; row++ {
-                    var newRow = row + shift
+            var newArray = [[Double]](count: self.rows, repeatedValue: [Double](count: self.cols, repeatedValue: padding))
+            for col in 0 ..< self.cols {
+                for row in 0 ..< self.rows {
+                    let newRow = row + shift
                     if newRow >= 0 && newRow < self.rows {
-                        array[newRow][col] = self[row][col]
+                        newArray[newRow][col] = self.array[row][col]
                     }
                 }
             }
-            return RMatrix(array: array)
+            return RMatrix(array: newArray)
         }
         else {
             assert(abs(shift) < self.cols)
-            var array = [Double](count: self.rows, repeatedValue: [Double](count: self.cols, repeatedValue: padding))
-            for var row = 0; row < self.rows; row++ {
-                for var col = 0; col < self.cols; col++ {
-                    var newCol = col + shift
+            var array = [[Double]](count: self.rows, repeatedValue: [Double](count: self.cols, repeatedValue: padding))
+            for row in 0 ..< self.rows {
+                for col in 0 ..< self.cols {
+                    let newCol = col + shift
                     if newCol >= 0 && newCol < self.cols {
-                        array[row][newCol] = self[row][col]
+                        array[row][newCol] = self.array[row][col]
                     }
                 }
             }
@@ -219,42 +219,40 @@ public class RMatrix {
         }
     }
 
-    public func roll (shift: Int, axis: Int = 0) -> RMatrix {
+    public func roll (shift: Int, axis: Int = 0, padding: Double = 0) -> RMatrix {
         if axis == 0 {
             assert(abs(shift) < self.rows)
-            var array = [Double](count: self.rows, repeatedValue: [Double](count: self.cols, repeatedValue: padding))
-            for var col = 0; col < self.cols; col++ {
-                for var row = 0; row < self.rows; row++ {
+            var newArray = [[Double]](count: self.rows, repeatedValue: [Double](count: self.cols, repeatedValue: padding))
+            for col in 0 ..< self.cols {
+                for row in 0 ..< self.rows {
                     var newRow = row + shift
                     if newRow >= self.rows {
                         newRow -= self.rows
-                    }
-                    else if newRow < 0 {
+                    } else if newRow < 0 {
                         newRow += self.rows
                     }
-                    array[newRow][col] = self[row][col]
+                    newArray[newRow][col] = self.array[row][col]
                 }
             }
-            return RMatrix(array: array)
+            return RMatrix(array: newArray)
         }
         else {
             assert(abs(shift) < self.cols)
-            var array = [Double](count: self.rows, repeatedValue: [Double](count: self.cols, repeatedValue: padding))
-            for var row = 0; row < self.rows; row++ {
-                for var col = 0; col < self.cols; col++ {
+            var newArray = [[Double]](count: self.rows, repeatedValue: [Double](count: self.cols, repeatedValue: padding))
+            for row in 0 ..< self.rows {
+                for col in 0 ..< self.cols {
                     var newCol = col + shift
                     if newCol >= self.cols {
                         newCol -= self.cols
-                    }
-                    else newCol < 0 {
-                        newCols += self.cols
+                    } else if newCol < 0 {
+                        newCol += self.cols
                     }
                     if newCol >= 0 && newCol < self.cols {
-                        array[row][newCol] = self[row][col]
+                        newArray[row][newCol] = self.array[row][col]
                     }
                 }
             }
-            return RMatrix(array: array)
+            return RMatrix(array: newArray)
         }
     }
 
@@ -292,7 +290,7 @@ public class RMatrix {
         
         var array = [Double](count: num, repeatedValue: 0)
         var value = start
-        for var i = 0; i < num; i++ {
+        for i in 0 ..< num {
             array[i] = value
             value += step
         }
@@ -329,13 +327,13 @@ public class RMatrix {
         get {
             if self.isRowVector {
                 let col = checkCol(rowOrColumn)
-                let array: [Double] = [0.0]
+                var array: [Double] = [0.0]
                 array[0] = self[0, col]
                 return RMatrix(array: array, rows: 1, cols: 1)
             }
             else if self.isColVector {
                 let row = checkRow(rowOrColumn)
-                let array: [Double] = [0.0]
+                var array: [Double] = [0.0]
                 array[0] = self[row, 0]
                 return RMatrix(array: array, rows: 1, cols: 1)
             }

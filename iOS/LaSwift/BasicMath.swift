@@ -295,7 +295,7 @@ extension RMatrix {
         var result: [Double]
         if axis == 0 {
             result = [Double](count: self.cols, repeatedValue: 0.0)
-            for var i = 0; i < self.cols; i++ {
+            for i in 0 ..< self.cols {
                 let vector = slice(self.la, rowRange: 0..<self.rows, colRange: i..<i+1)
                 result[i] = closure(vector)
             }
@@ -303,7 +303,7 @@ extension RMatrix {
         }
         else if axis == 1 {
             result = [Double](count: self.rows, repeatedValue: 0.0)
-            for var i = 0; i < self.rows; i++ {
+            for i in 0 ..< self.rows {
                 let vector = slice(self.la, rowRange: i..<i, colRange: 0..<self.cols)
                 result[i] = closure(vector)
             }

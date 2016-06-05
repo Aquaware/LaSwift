@@ -296,7 +296,7 @@ public func % (left: RMatrix, right: RMatrix) -> RMatrix {
     assert(left.rows == right.rows && left.cols == right.cols)
     let size = left.rows * left.cols
     var buffer = [Double] (count: size, repeatedValue: 0.0)
-    for var i = 0; i < size; i++ {
+    for i in 0 ..< size {
         buffer[i] = left.flat[i] / right.flat[i]
     }
     return RMatrix(array: buffer, rows: left.rows, cols: right.cols)
@@ -308,7 +308,8 @@ public func / (left: RMatrix, right: RMatrix) -> RMatrix {
 }
 
 public func << (left: RMatrix, right: Int) -> RMatrix {
-    left.shiftToLeft(right)
+    left.shift(-right)
+    return left
 }
 
 public func <<= (inout left: RMatrix, right: Int) {
@@ -316,7 +317,8 @@ public func <<= (inout left: RMatrix, right: Int) {
 }
 
 public func >> (left: RMatrix, right: Int) -> RMatrix {
-    left.shiftToRight(right)
+    left.shift(right)
+    return left
 }
 
 public func >>= (inout left: RMatrix, right: Int) {

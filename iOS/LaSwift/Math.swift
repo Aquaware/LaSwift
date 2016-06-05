@@ -15,7 +15,7 @@ public func toComplex(real: [Double], imag: [Double]) -> [__CLPK_doublecomplex] 
     var array = [__CLPK_doublecomplex]( count: real.count,
         repeatedValue: __CLPK_doublecomplex(r: 0.0, i: 0.0))
     
-    for var i = 0; i < array.count; i++ {
+    for i in 0 ..< array.count {
         array[i].r = real[i]
         array[i].i = imag[i]
     }
@@ -27,7 +27,7 @@ public func toComplex(real: [Double]) -> [__CLPK_doublecomplex] {
     var array = [__CLPK_doublecomplex]( count: real.count,
         repeatedValue: __CLPK_doublecomplex(r: 0.0, i: 0.0))
     
-    for var i = 0; i < array.count; i++ {
+    for i in 0 ..< array.count {
         array[i].r = real[i]
     }
     
@@ -38,7 +38,7 @@ public func toComplex2(imag: [Double]) -> [__CLPK_doublecomplex] {
     var array = [__CLPK_doublecomplex]( count: imag.count,
         repeatedValue: __CLPK_doublecomplex(r: 0.0, i: 0.0))
     
-    for var i = 0; i < array.count; i++ {
+    for i in 0 ..< array.count {
         array[i].i = imag[i]
     }
     
@@ -49,7 +49,7 @@ public func toComplex2(imag: [Double]) -> [__CLPK_doublecomplex] {
 public func splitFromComplex(complex: [__CLPK_doublecomplex]) -> ([Double], [Double]) {
     var real = [Double]( count: complex.count, repeatedValue: 0.0)
     var imag = [Double]( count: complex.count, repeatedValue: 0.0)
-    for var i = 0; i < complex.count / 2; i++ {
+    for i in 0 ..< complex.count / 2 {
         let c = complex[i]
         real[i] = Double(c.r)
         imag[i] = Double(c.i)
